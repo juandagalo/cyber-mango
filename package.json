@@ -1,0 +1,47 @@
+{
+  "name": "cyber-mango",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite dev",
+    "build": "vite build",
+    "preview": "vite preview",
+    "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
+    "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
+    "test": "vitest",
+    "test:run": "vitest run",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "tsx src/lib/server/db/migrate.ts",
+    "db:studio": "drizzle-kit studio",
+    "test:e2e": "playwright test"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.40.0",
+    "@sveltejs/adapter-auto": "^3.0.0",
+    "@sveltejs/kit": "^2.0.0",
+    "@sveltejs/vite-plugin-svelte": "^3.0.0",
+    "@types/better-sqlite3": "^7.6.0",
+    "autoprefixer": "^10.5.0",
+    "drizzle-kit": "^0.30.0",
+    "eslint": "^9.0.0",
+    "postcss": "^8.5.9",
+    "prettier": "^3.0.0",
+    "prettier-plugin-svelte": "^3.0.0",
+    "svelte": "^4.2.0",
+    "svelte-check": "^3.6.0",
+    "tailwindcss": "^3.4.19",
+    "tslib": "^2.4.1",
+    "tsx": "^4.0.0",
+    "typescript": "^5.0.0",
+    "vitest": "^1.0.0"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0",
+    "better-sqlite3": "^9.0.0",
+    "drizzle-orm": "^0.40.0",
+    "nanoid": "^5.0.0",
+    "svelte-dnd-action": "^0.9.0",
+    "zod": "^3.22.0"
+  }
+}

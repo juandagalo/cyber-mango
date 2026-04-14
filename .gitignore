@@ -1,0 +1,17 @@
+node_modules/
+*.db
+*.db-wal
+*.db-shm
+.env
+dist/
+.svelte-kit/
+data/
+build/
+
+# Local tool configs (machine-specific paths)
+.mcp.json
+.atl/
+
+# Playwright artifacts
+test-results/
+playwright-report/

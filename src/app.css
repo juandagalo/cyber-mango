@@ -295,6 +295,76 @@ body {
 }
 
 /* ═══════════════════════════════════════════
+   MODAL — cyberware materialization
+   ═══════════════════════════════════════════ */
+@keyframes cyber-modal-in {
+  0% {
+    clip-path: polygon(50% 50%, 50% 50%, 50% 50%, 50% 50%, 50% 50%, 50% 50%);
+    opacity: 0;
+  }
+  25% {
+    clip-path: polygon(0 48%, calc(100% - 8px) 48%, 100% 48%, 100% 52%, 8px 52%, 0 52%);
+    opacity: 1;
+  }
+  55% {
+    clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
+    opacity: 1;
+  }
+  65% {
+    filter: brightness(1.4);
+  }
+  100% {
+    clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
+    opacity: 1;
+    filter: brightness(1);
+  }
+}
+
+@keyframes cyber-modal-out {
+  0% {
+    clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
+    opacity: 1;
+    filter: brightness(1);
+  }
+  25% {
+    filter: brightness(1.3);
+  }
+  50% {
+    clip-path: polygon(0 48%, calc(100% - 8px) 48%, 100% 48%, 100% 52%, 8px 52%, 0 52%);
+    opacity: 1;
+  }
+  100% {
+    clip-path: polygon(50% 50%, 50% 50%, 50% 50%, 50% 50%, 50% 50%, 50% 50%);
+    opacity: 0;
+  }
+}
+
+@keyframes cyber-backdrop-in {
+  0% { opacity: 0; backdrop-filter: blur(0px); }
+  100% { opacity: 1; backdrop-filter: blur(6px); }
+}
+
+@keyframes cyber-backdrop-out {
+  0% { opacity: 1; backdrop-filter: blur(6px); }
+  100% { opacity: 0; backdrop-filter: blur(0px); }
+}
+
+/* One-shot scan on modal open */
+@keyframes modal-scan-once {
+  0% { top: 0; opacity: 0; }
+  10% { opacity: 1; }
+  100% { top: 100%; opacity: 0; }
+}
+
+/* Border flash on open */
+@keyframes border-flash-in {
+  0%, 100% { border-color: rgba(252, 238, 10, 0.2); }
+  30% { border-color: rgba(252, 238, 10, 0.8); }
+  50% { border-color: rgba(252, 238, 10, 0.15); }
+  65% { border-color: rgba(252, 238, 10, 0.5); }
+}
+
+/* ═══════════════════════════════════════════
    COLUMN ACCENT PULSE — cyberware heartbeat
    ═══════════════════════════════════════════ */
 @keyframes accent-pulse {

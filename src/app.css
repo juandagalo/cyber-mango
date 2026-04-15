@@ -364,6 +364,64 @@ body {
   65% { border-color: rgba(252, 238, 10, 0.5); }
 }
 
+/* Traveling light — horizontal (left to right) */
+@keyframes border-travel-h {
+  0% { background-position: -100% 0; }
+  100% { background-position: 200% 0; }
+}
+
+/* Traveling light — vertical (top to bottom) */
+@keyframes border-travel-v {
+  0% { background-position: 0 -100%; }
+  100% { background-position: 0 200%; }
+}
+
+.border-line-travel {
+  pointer-events: none;
+  position: absolute;
+}
+
+/* Top edge */
+.border-line-top {
+  top: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, transparent 30%, var(--cyber-yellow) 50%, transparent 70%);
+  background-size: 50% 100%;
+  background-repeat: no-repeat;
+  animation: border-travel-h 3s linear infinite;
+}
+
+/* Bottom edge */
+.border-line-bottom {
+  bottom: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, transparent 30%, var(--cyber-red-bright) 50%, transparent 70%);
+  background-size: 50% 100%;
+  background-repeat: no-repeat;
+  animation: border-travel-h 3s linear infinite;
+  animation-delay: -1.5s;
+  animation-direction: reverse;
+}
+
+/* Right edge */
+.border-line-right {
+  top: 0; right: 0; bottom: 0; width: 1px;
+  background: linear-gradient(180deg, transparent 30%, var(--cyber-cyan) 50%, transparent 70%);
+  background-size: 100% 50%;
+  background-repeat: no-repeat;
+  animation: border-travel-v 3s linear infinite;
+  animation-delay: -0.75s;
+}
+
+/* Left edge */
+.border-line-left {
+  top: 0; left: 0; bottom: 0; width: 1px;
+  background: linear-gradient(180deg, transparent 30%, var(--cyber-yellow) 50%, transparent 70%);
+  background-size: 100% 50%;
+  background-repeat: no-repeat;
+  animation: border-travel-v 3s linear infinite;
+  animation-delay: -2.25s;
+  animation-direction: reverse;
+}
+
 /* ═══════════════════════════════════════════
    COLUMN ACCENT PULSE — cyberware heartbeat
    ═══════════════════════════════════════════ */

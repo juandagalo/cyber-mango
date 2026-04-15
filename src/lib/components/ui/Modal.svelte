@@ -54,9 +54,11 @@
                animation: {closing ? 'cyber-modal-out 0.3s ease-in forwards' : 'cyber-modal-in 0.4s ease-out forwards'},
                           {closing ? 'none' : 'border-flash-in 0.6s ease-out'};"
     >
-        <!-- Top accent line -->
-        <div class="absolute top-0 left-0 right-0 h-px"
-             style="background: linear-gradient(90deg, var(--cyber-red), var(--cyber-yellow) 50%, transparent);"></div>
+        <!-- Traveling border lights — energy flowing around the perimeter -->
+        <div class="border-line-travel border-line-top"></div>
+        <div class="border-line-travel border-line-right"></div>
+        <div class="border-line-travel border-line-bottom"></div>
+        <div class="border-line-travel border-line-left"></div>
 
         <!-- One-shot scan line on open -->
         {#if visible && !closing}
@@ -103,9 +105,5 @@
             {/if}
         </div>
 
-        <!-- Bottom accent line -->
-        <div class="absolute bottom-0 left-0 right-0 h-px"
-             style="background: linear-gradient(90deg, transparent, var(--cyber-yellow) 50%, var(--cyber-red));
-                    opacity: 0.3;"></div>
     </div>
 </div>

@@ -94,9 +94,18 @@ body {
   99% { opacity: 1; }
 }
 
+/* Periodic glitch — fires a short burst every ~8s */
+@keyframes glitch-periodic {
+  0%, 86%, 100% { opacity: 1; transform: translate(0); filter: none; }
+  87% { opacity: 0.85; transform: translate(-2px, 0); filter: hue-rotate(20deg); }
+  88% { opacity: 1; transform: translate(2px, 1px); filter: none; }
+  89% { opacity: 0.7; transform: translate(-1px, -1px); filter: hue-rotate(-20deg); }
+  90% { opacity: 1; transform: translate(0); filter: none; }
+}
+
 .glitch-text {
   position: relative;
-  animation: glitch-flash 4s infinite;
+  animation: glitch-periodic 8s ease-in-out infinite, glitch-flash 4s infinite;
 }
 
 .glitch-text::before,
@@ -110,18 +119,44 @@ body {
   opacity: 0;
 }
 
+/* Periodic ghost layers — appear during the glitch burst */
+@keyframes glitch-layer-red {
+  0%, 86%, 91%, 100% { opacity: 0; transform: translate(0); }
+  87% { opacity: 0.7; transform: translate(-3px, 0); }
+  88% { opacity: 0.5; transform: translate(2px, 1px); }
+  89% { opacity: 0.8; transform: translate(-1px, 0); }
+  90% { opacity: 0; transform: translate(0); }
+}
+
+@keyframes glitch-layer-cyan {
+  0%, 86%, 91%, 100% { opacity: 0; transform: translate(0); }
+  87% { opacity: 0.5; transform: translate(3px, 0); }
+  88% { opacity: 0.8; transform: translate(-2px, -1px); }
+  89% { opacity: 0.6; transform: translate(1px, 0); }
+  90% { opacity: 0; transform: translate(0); }
+}
+
+.glitch-text::before {
+  color: var(--cyber-red-bright);
+  animation: glitch-layer-red 8s ease-in-out infinite;
+  clip-path: inset(0 0 50% 0);
+}
+
+.glitch-text::after {
+  color: var(--cyber-cyan);
+  animation: glitch-layer-cyan 8s ease-in-out infinite;
+  clip-path: inset(50% 0 0 0);
+}
+
+/* Also glitch on hover (intensified) */
 .glitch-text:hover::before {
   opacity: 0.8;
-  color: var(--cyber-red-bright);
   animation: glitch 0.3s infinite;
-  clip-path: inset(0 0 50% 0);
 }
 
 .glitch-text:hover::after {
   opacity: 0.8;
-  color: var(--cyber-cyan);
   animation: glitch 0.3s infinite reverse;
-  clip-path: inset(50% 0 0 0);
 }
 
 /* ═══════════════════════════════════════════
@@ -160,8 +195,13 @@ body {
 }
 
 /* ═══════════════════════════════════════════
-   CORNER BRACKETS — HUD decorations
+   CORNER BRACKETS — HUD decorations (breathing)
    ═══════════════════════════════════════════ */
+@keyframes bracket-breathe {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 0.9; }
+}
+
 .corner-brackets {
   position: relative;
 }
@@ -173,6 +213,7 @@ body {
   width: 8px;
   height: 8px;
   pointer-events: none;
+  animation: bracket-breathe 4s ease-in-out infinite;
 }
 
 .corner-brackets::before {
@@ -187,6 +228,13 @@ body {
   right: -1px;
   border-bottom: 1px solid var(--cyber-yellow);
   border-right: 1px solid var(--cyber-yellow);
+  animation-delay: 2s;
+}
+
+.corner-brackets:hover::before,
+.corner-brackets:hover::after {
+  opacity: 1;
+  animation: none;
 }
 
 /* ═══════════════════════════════════════════
@@ -244,6 +292,87 @@ body {
   0%, 97%, 100% { opacity: 1; }
   98% { opacity: 0.95; }
   99% { opacity: 0.98; }
+}
+
+/* ═══════════════════════════════════════════
+   COLUMN ACCENT PULSE — cyberware heartbeat
+   ═══════════════════════════════════════════ */
+@keyframes accent-pulse {
+  0%, 100% { opacity: 0.7; }
+  50% { opacity: 1; }
+}
+
+.accent-bar-pulse {
+  animation: accent-pulse 3s ease-in-out infinite;
+}
+
+/* ═══════════════════════════════════════════
+   HEADER GRADIENT SWEEP — data flowing through cables
+   ═══════════════════════════════════════════ */
+@keyframes gradient-sweep {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 200% 50%; }
+}
+
+.gradient-line-sweep {
+  background: linear-gradient(
+    90deg,
+    var(--cyber-red),
+    var(--cyber-yellow),
+    var(--cyber-cyan),
+    var(--cyber-red),
+    var(--cyber-yellow)
+  );
+  background-size: 200% 100%;
+  animation: gradient-sweep 6s linear infinite;
+}
+
+/* ═══════════════════════════════════════════
+   SCREEN SCAN — periodic full-screen scan line
+   ═══════════════════════════════════════════ */
+@keyframes screen-scan {
+  0%, 85% { top: -5%; opacity: 0; }
+  86% { top: -5%; opacity: 1; }
+  100% { top: 105%; opacity: 0.3; }
+}
+
+.screen-scan::before {
+  content: '';
+  position: fixed;
+  left: 0;
+  top: -5%;
+  width: 100%;
+  height: 3px;
+  background: linear-gradient(
+    90deg,
+    transparent 5%,
+    rgba(252, 238, 10, 0.15) 20%,
+    rgba(252, 238, 10, 0.3) 50%,
+    rgba(252, 238, 10, 0.15) 80%,
+    transparent 95%
+  );
+  box-shadow: 0 0 15px rgba(252, 238, 10, 0.1), 0 0 30px rgba(252, 238, 10, 0.05);
+  pointer-events: none;
+  z-index: 998;
+  animation: screen-scan 15s linear infinite;
+}
+
+/* ═══════════════════════════════════════════
+   DATA FLICKER — ticker/status values
+   ═══════════════════════════════════════════ */
+@keyframes data-flicker {
+  0%, 92%, 94%, 96%, 100% { opacity: 1; }
+  93% { opacity: 0.4; }
+  95% { opacity: 0.7; }
+}
+
+.data-flicker {
+  animation: data-flicker 5s ease-in-out infinite;
+}
+
+.data-flicker-alt {
+  animation: data-flicker 5s ease-in-out infinite;
+  animation-delay: 2.5s;
 }
 
 /* ═══════════════════════════════════════════

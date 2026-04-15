@@ -220,8 +220,8 @@
          style="background: linear-gradient(90deg, {headerColor}10, transparent);
                 border-bottom: 2px solid {headerColor}50;">
 
-        <!-- Color accent bar -->
-        <div class="absolute left-0 top-0 bottom-0 w-[3px]" style="background: {headerColor};"></div>
+        <!-- Color accent bar — cyberware heartbeat -->
+        <div class="absolute left-0 top-0 bottom-0 w-[3px] accent-bar-pulse" style="background: {headerColor}; box-shadow: 0 0 6px {headerColor}40;"></div>
 
         {#if renaming}
             <input

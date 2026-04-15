@@ -298,8 +298,8 @@ body {
    COLUMN ACCENT PULSE — cyberware heartbeat
    ═══════════════════════════════════════════ */
 @keyframes accent-pulse {
-  0%, 100% { opacity: 0.7; }
-  50% { opacity: 1; }
+  0%, 100% { opacity: 0.45; box-shadow: 0 0 4px currentColor; }
+  50% { opacity: 1; box-shadow: 0 0 10px currentColor, 0 0 20px currentColor; }
 }
 
 .accent-bar-pulse {

@@ -212,16 +212,16 @@
     />
 {/if}
 
-<div class="flex flex-col flex-shrink-0 w-[280px] h-full overflow-hidden"
+<div class="flex flex-col flex-shrink-0 w-[280px] h-full overflow-hidden relative"
      style="background: var(--bg-surface); border: 1px solid rgba(252,238,10,0.06);">
+
+    <!-- Color accent bar — full height cyberware heartbeat -->
+    <div class="absolute left-0 top-0 bottom-0 w-[4px] accent-bar-pulse z-10" style="background: {headerColor}; color: {headerColor};"></div>
 
     <!-- Column Header -->
     <div class="flex items-center gap-2 px-3 py-2 flex-shrink-0 relative"
          style="background: linear-gradient(90deg, {headerColor}10, transparent);
                 border-bottom: 2px solid {headerColor}50;">
-
-        <!-- Color accent bar — cyberware heartbeat -->
-        <div class="absolute left-0 top-0 bottom-0 w-[3px] accent-bar-pulse" style="background: {headerColor}; box-shadow: 0 0 6px {headerColor}40;"></div>
 
         {#if renaming}
             <input

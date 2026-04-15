@@ -1,12 +1,12 @@
 <script lang="ts">
-    import { createEventDispatcher } from 'svelte';
     import type { CardWithTags } from '$lib/types/board.js';
     import PriorityBadge from './PriorityBadge.svelte';
     import TagBadge from '$lib/components/tag/TagBadge.svelte';
 
-    export let card: CardWithTags;
-
-    const dispatch = createEventDispatcher();
+    let { card, onopen }: {
+        card: CardWithTags;
+        onopen?: (card: CardWithTags) => void;
+    } = $props();
 
     const priorityColors: Record<string, string> = {
         critical: '#FF0040',
@@ -22,19 +22,19 @@
         low: 'rgba(64,64,96,0.2)'
     };
 
-    $: borderColor = priorityColors[card.priority] ?? '#404060';
-    $: glowColor = priorityGlows[card.priority] ?? 'transparent';
-    $: visibleTags = card.tags.slice(0, 3);
-    $: extraTagCount = card.tags.length - 3;
+    const borderColor = $derived(priorityColors[card.priority] ?? '#404060');
+    const glowColor = $derived(priorityGlows[card.priority] ?? 'transparent');
+    const visibleTags = $derived(card.tags.slice(0, 3));
+    const extraTagCount = $derived(card.tags.length - 3);
 
-    let hovered = false;
+    let hovered = $state(false);
 
     function handleClick() {
-        dispatch('open', card);
+        onopen?.(card);
     }
 </script>
 
-<!-- svelte-ignore a11y-click-events-have-key-events a11y-no-static-element-interactions -->
+<!-- svelte-ignore a11y_click_events_have_key_events a11y_no_static_element_interactions -->
 <div
     class="rounded cursor-pointer select-none transition-all duration-150 px-3 py-2.5"
     style="
@@ -42,12 +42,12 @@
         border-left: 2px solid {borderColor};
         {hovered ? `box-shadow: -2px 0 8px ${glowColor}, 0 0 12px ${glowColor};` : 'box-shadow: none;'}
     "
-    on:mouseenter={() => (hovered = true)}
-    on:mouseleave={() => (hovered = false)}
-    on:click={handleClick}
+    onmouseenter={() => (hovered = true)}
+    onmouseleave={() => (hovered = false)}
+    onclick={handleClick}
     role="button"
     tabindex="0"
-    on:keydown={(e) => e.key === 'Enter' && handleClick()}
+    onkeydown={(e) => e.key === 'Enter' && handleClick()}
 >
     <div class="flex flex-col gap-1.5">
         <p class="text-[#e0e0e0] text-sm font-mono leading-snug break-words">{card.title}</p>

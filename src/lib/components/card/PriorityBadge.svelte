@@ -1,7 +1,7 @@
 <script lang="ts">
     import type { Priority } from '$lib/types/board.js';
 
-    export let priority: Priority;
+    let { priority }: { priority: Priority } = $props();
 
     const config: Record<Priority, { label: string; color: string; glow: string; pulse: boolean }> = {
         critical: {
@@ -30,7 +30,7 @@
         }
     };
 
-    $: cfg = config[priority];
+    const cfg = $derived(config[priority]);
 </script>
 
 <span

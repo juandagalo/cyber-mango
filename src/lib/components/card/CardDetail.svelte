@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { createEventDispatcher, tick } from 'svelte';
+    import { tick, untrack } from 'svelte';
     import { marked } from 'marked';
     import type { CardWithTags, Priority, Tag } from '$lib/types/board.js';
     import Modal from '$lib/components/ui/Modal.svelte';
@@ -10,24 +10,28 @@
     import { updateCardInStore, removeCardFromStore } from '$lib/stores/board.js';
     import { addToast } from '$lib/stores/toast.js';
 
-    export let card: CardWithTags;
-    export let boardId: string;
+    let { card, boardId, onclose, onupdated, ondeleted }: {
+        card: CardWithTags;
+        boardId: string;
+        onclose?: () => void;
+        onupdated?: (card: CardWithTags) => void;
+        ondeleted?: () => void;
+    } = $props();
 
-    const dispatch = createEventDispatcher();
+    // Local editable state — intentionally captures initial prop values
+    let title = $state(untrack(() => card.title));
+    let description = $state(untrack(() => card.description ?? ''));
+    let priority = $state<Priority>(untrack(() => card.priority));
+    let tags = $state<Tag[]>(untrack(() => [...card.tags]));
+    let assignedTagIds = $state<string[]>(untrack(() => card.tags.map(t => t.id)));
 
-    let title = card.title;
-    let description = card.description ?? '';
-    let priority: Priority = card.priority;
-    let tags: Tag[] = [...card.tags];
-    let assignedTagIds: string[] = card.tags.map(t => t.id);
-
-    let savingTitle = false;
-    let savingDesc = false;
-    let savingPriority = false;
-    let deletingCard = false;
-    let showConfirmDelete = false;
-    let showTagPicker = false;
-    let editingDescription = !description;
+    let savingTitle = $state(false);
+    let savingDesc = $state(false);
+    let savingPriority = $state(false);
+    let deletingCard = $state(false);
+    let showConfirmDelete = $state(false);
+    let showTagPicker = $state(false);
+    let editingDescription = $state(untrack(() => !card.description));
 
     // Debounce timers
     let titleTimer: ReturnType<typeof setTimeout>;
@@ -35,7 +39,7 @@
 
     // Markdown rendering
     marked.setOptions({ breaks: true, gfm: true });
-    $: renderedDescription = marked.parse(description || '') as string;
+    const renderedDescription = $derived(marked.parse(description || '') as string);
 
     const priorities: Priority[] = ['critical', 'high', 'medium', 'low'];
     const priorityColors: Record<Priority, string> = {
@@ -59,7 +63,6 @@
         }
     }
 
-    // Auto-save title on blur (debounced)
     function onTitleInput() {
         clearTimeout(titleTimer);
         titleTimer = setTimeout(saveTitle, 500);
@@ -76,9 +79,8 @@
                 body: JSON.stringify({ title: newTitle })
             });
             if (res.ok) {
-                const data = await res.json();
                 updateCardInStore(card.id, { title: newTitle });
-                dispatch('updated', { ...card, title: newTitle });
+                onupdated?.({ ...card, title: newTitle });
             } else {
                 addToast('Failed to save title');
                 title = card.title;
@@ -107,7 +109,7 @@
             });
             if (res.ok) {
                 updateCardInStore(card.id, { description: newDesc || null });
-                dispatch('updated', { ...card, description: newDesc || null });
+                onupdated?.({ ...card, description: newDesc || null });
             } else {
                 addToast('Failed to save description');
             }
@@ -130,7 +132,7 @@
             });
             if (res.ok) {
                 updateCardInStore(card.id, { priority: newPriority });
-                dispatch('updated', { ...card, priority: newPriority });
+                onupdated?.({ ...card, priority: newPriority });
             } else {
                 addToast('Failed to update priority');
                 priority = card.priority;
@@ -150,7 +152,7 @@
             if (res.ok) {
                 removeCardFromStore(card.id);
                 showConfirmDelete = false;
-                dispatch('deleted');
+                ondeleted?.();
             } else {
                 addToast('Failed to delete card');
             }
@@ -161,9 +163,7 @@
         }
     }
 
-    // Refresh tags from card after TagPicker changes
     async function onTagChange() {
-        // Re-fetch card tags
         try {
             const res = await fetch(`/api/boards/${boardId}`);
             if (res.ok) {
@@ -184,11 +184,11 @@
     function close() {
         clearTimeout(titleTimer);
         clearTimeout(descTimer);
-        dispatch('close');
+        onclose?.();
     }
 </script>
 
-<Modal on:close={close} maxWidth="max-w-5xl">
+<Modal onclose={close} maxWidth="max-w-5xl">
     <div class="px-6 py-5 flex flex-col gap-5 max-h-[80vh] overflow-hidden">
 
         <div class="grid grid-cols-1 md:grid-cols-[7fr,3fr] gap-6 flex-1 min-h-0">
@@ -204,8 +204,8 @@
                         bind:value={title}
                         type="text"
                         class="bg-transparent border border-[rgba(0,255,255,0.15)] rounded px-3 py-2 text-sm font-mono text-white focus:outline-none focus:border-neon-cyan transition-colors"
-                        on:input={onTitleInput}
-                        on:blur={saveTitle}
+                        oninput={onTitleInput}
+                        onblur={saveTitle}
                     />
                 </div>
 
@@ -215,7 +215,7 @@
                         <label for="card-desc" class="text-[10px] font-mono uppercase tracking-wider text-[#808090]">Description</label>
                         <button
                             class="text-[10px] font-mono uppercase tracking-wider px-2 py-0.5 rounded transition-colors {editingDescription ? 'text-neon-cyan border border-neon-cyan/30 bg-neon-cyan/5' : 'text-[#808090] hover:text-neon-cyan border border-transparent'}"
-                            on:click={() => { editingDescription = !editingDescription; }}
+                            onclick={() => { editingDescription = !editingDescription; }}
                         >
                             {editingDescription ? 'Preview' : 'Edit'}
                         </button>
@@ -228,16 +228,17 @@
                             rows="12"
                             placeholder="Add a description... (supports markdown)"
                             class="bg-transparent border border-[rgba(0,255,255,0.15)] rounded px-3 py-2 text-sm font-mono text-[#e0e0e0] placeholder:text-[#404060] focus:outline-none focus:border-neon-cyan transition-colors resize-none flex-1 min-h-0"
-                            on:input={onDescInput}
-                            on:blur={saveDescription}
+                            oninput={onDescInput}
+                            onblur={saveDescription}
                         ></textarea>
                     {:else}
+                        <!-- svelte-ignore a11y_click_events_have_key_events a11y_no_static_element_interactions -->
                         <div
                             class="markdown-body border border-[rgba(0,255,255,0.15)] rounded px-4 py-3 text-sm text-[#e0e0e0] flex-1 min-h-0 overflow-y-auto cursor-text"
-                            on:dblclick={() => { editingDescription = true; }}
+                            ondblclick={() => { editingDescription = true; }}
                             role="button"
                             tabindex="0"
-                            on:keydown={(e) => { if (e.key === 'Enter') editingDescription = true; }}
+                            onkeydown={(e) => { if (e.key === 'Enter') editingDescription = true; }}
                         >
                             {#if description}
                                 {@html renderedDescription}
@@ -265,7 +266,7 @@
                                     background: {priority === p ? priorityColors[p] + '25' : 'transparent'};
                                     {priority === p ? `box-shadow: 0 0 8px ${priorityColors[p]}40;` : ''}
                                 "
-                                on:click={() => changePriority(p)}
+                                onclick={() => changePriority(p)}
                                 disabled={savingPriority}
                             >
                                 {p}
@@ -284,32 +285,33 @@
                         <div class="relative">
                             <button
                                 class="px-2 py-0.5 text-[10px] font-mono border border-[rgba(0,255,255,0.2)] text-[#808090] hover:text-neon-cyan hover:border-neon-cyan rounded transition-all"
-                                on:click|stopPropagation={() => (showTagPicker = !showTagPicker)}
+                                onclick={(e: MouseEvent) => { e.stopPropagation(); showTagPicker = !showTagPicker; }}
                             >
                                 + Tag
                             </button>
 
                             {#if showTagPicker}
-                                <!-- svelte-ignore a11y-click-events-have-key-events a11y-no-static-element-interactions -->
+                                <!-- svelte-ignore a11y_click_events_have_key_events -->
                                 <div
                                     class="absolute right-0 top-full mt-1 z-30 rounded overflow-hidden"
                                     style="background: #12121a; border: 1px solid rgba(0,255,255,0.2); box-shadow: 0 8px 24px rgba(0,0,0,0.6); min-width: 220px;"
-                                    on:click|stopPropagation
+                                    onclick={(e: MouseEvent) => e.stopPropagation()}
+                                    role="presentation"
                                 >
                                     <TagPicker
                                         {boardId}
                                         cardId={card.id}
                                         {assignedTagIds}
-                                        on:change={onTagChange}
+                                        onchange={onTagChange}
                                     />
                                 </div>
 
                                 <!-- Close picker on outside click -->
-                                <!-- svelte-ignore a11y-click-events-have-key-events a11y-no-static-element-interactions -->
+                                <!-- svelte-ignore a11y_click_events_have_key_events a11y_no_static_element_interactions -->
                                 <div
                                     class="fixed inset-0 z-20"
                                     role="presentation"
-                                    on:click={() => (showTagPicker = false)}
+                                    onclick={() => (showTagPicker = false)}
                                 ></div>
                             {/if}
                         </div>
@@ -332,7 +334,7 @@
                 <div class="border-t border-[rgba(255,0,64,0.15)] pt-3 mt-auto">
                     <button
                         class="w-full px-4 py-2 text-xs font-mono uppercase tracking-wider border border-neon-red text-neon-red hover:bg-neon-red hover:text-[#0a0a0f] rounded transition-all"
-                        on:click={() => (showConfirmDelete = true)}
+                        onclick={() => (showConfirmDelete = true)}
                     >
                         Delete Card
                     </button>
@@ -346,7 +348,7 @@
     <ConfirmDialog
         message="Delete card '{card.title}'? This cannot be undone."
         loading={deletingCard}
-        on:confirm={deleteCard}
-        on:cancel={() => (showConfirmDelete = false)}
+        onconfirm={deleteCard}
+        oncancel={() => (showConfirmDelete = false)}
     />
 {/if}

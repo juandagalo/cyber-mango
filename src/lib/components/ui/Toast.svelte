@@ -22,7 +22,7 @@
             <p class="text-[#e0e0e0] text-sm font-mono flex-1">{toast.message}</p>
             <button
                 class="text-[#808090] hover:text-white flex-shrink-0 ml-2"
-                on:click={() => removeToast(toast.id)}
+                onclick={() => removeToast(toast.id)}
             >
                 ×
             </button>

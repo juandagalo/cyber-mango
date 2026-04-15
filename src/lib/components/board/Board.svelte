@@ -8,15 +8,19 @@
     import { boardStore } from '$lib/stores/board.js';
     import { addToast } from '$lib/stores/toast.js';
 
-    export let board: BoardWithColumns;
+    let { board }: {
+        board: BoardWithColumns;
+    } = $props();
 
-    let columns: ColumnWithCards[] = [];
-    $: columns = [...board.columns].sort((a, b) => a.position - b.position);
+    let columns = $state<ColumnWithCards[]>([]);
+    $effect(() => {
+        columns = [...board.columns].sort((a, b) => a.position - b.position);
+    });
 
-    let selectedCard: CardWithTags | null = null;
-    let showTagManager = false;
+    let selectedCard = $state<CardWithTags | null>(null);
+    let showTagManager = $state(false);
 
-    $: totalCards = board.columns.reduce((sum, col) => sum + col.cards.length, 0);
+    const totalCards = $derived(board.columns.reduce((sum, col) => sum + col.cards.length, 0));
 
     async function refreshBoard() {
         try {
@@ -71,8 +75,8 @@
         }
     }
 
-    function openCard(e: CustomEvent<CardWithTags>) {
-        selectedCard = e.detail;
+    function openCard(card: CardWithTags) {
+        selectedCard = card;
     }
 
     function closeCard() {
@@ -99,7 +103,7 @@
     </div>
     <button
         class="text-xs font-mono uppercase tracking-wider px-3 py-1.5 border border-[rgba(0,255,255,0.2)] text-[#808090] hover:text-neon-cyan hover:border-neon-cyan rounded transition-all"
-        on:click={() => (showTagManager = true)}
+        onclick={() => (showTagManager = true)}
     >
         Manage Tags
     </button>
@@ -117,15 +121,15 @@
                 type: 'column',
                 dropTargetStyle: { outline: '1px dashed rgba(0,255,255,0.25)', outlineOffset: '-2px' }
             }}
-            on:consider={handleColumnConsider}
-            on:finalize={handleColumnFinalize}
+            onconsider={handleColumnConsider}
+            onfinalize={handleColumnFinalize}
         >
             {#each columns as col (col.id)}
                 <div class="h-full flex-shrink-0">
                     <Column
                         column={col}
-                        on:refresh={refreshBoard}
-                        on:openCard={openCard}
+                        onrefresh={refreshBoard}
+                        onopencard={openCard}
                     />
                 </div>
             {/each}
@@ -133,7 +137,7 @@
 
         <!-- Add column at end -->
         <div class="flex-shrink-0 self-start">
-            <AddColumn boardId={board.id} on:refresh={refreshBoard} />
+            <AddColumn boardId={board.id} onrefresh={refreshBoard} />
         </div>
     </div>
 </div>
@@ -145,9 +149,9 @@
     <CardDetail
         card={selectedCard}
         boardId={board.id}
-        on:close={closeCard}
-        on:updated={(e) => { selectedCard = e.detail; }}
-        on:deleted={closeCard}
+        onclose={closeCard}
+        onupdated={(card) => { selectedCard = card; }}
+        ondeleted={closeCard}
     />
 {/if}
 
@@ -155,6 +159,6 @@
 {#if showTagManager}
     <TagManager
         boardId={board.id}
-        on:close={() => { showTagManager = false; refreshBoard(); }}
+        onclose={() => { showTagManager = false; refreshBoard(); }}
     />
 {/if}

@@ -1,14 +1,17 @@
 <script lang="ts">
-    import { createEventDispatcher, onMount, onDestroy } from 'svelte';
+    import type { Snippet } from 'svelte';
+    import { onMount, onDestroy } from 'svelte';
     import { fade, scale } from 'svelte/transition';
 
-    export let title = '';
-    export let maxWidth = 'max-w-2xl';
-
-    const dispatch = createEventDispatcher();
+    let { title = '', maxWidth = 'max-w-2xl', onclose, children }: {
+        title?: string;
+        maxWidth?: string;
+        onclose?: () => void;
+        children?: Snippet;
+    } = $props();
 
     function close() {
-        dispatch('close');
+        onclose?.();
     }
 
     function handleKeydown(e: KeyboardEvent) {
@@ -28,11 +31,12 @@
     });
 </script>
 
-<!-- svelte-ignore a11y-click-events-have-key-events a11y-no-static-element-interactions -->
+<!-- svelte-ignore a11y_click_events_have_key_events -->
 <div
     class="fixed inset-0 z-50 flex items-center justify-center p-4"
     style="background: rgba(0,0,0,0.75); backdrop-filter: blur(4px);"
-    on:click={handleBackdropClick}
+    onclick={handleBackdropClick}
+    role="presentation"
     transition:fade={{ duration: 150 }}
 >
     <div
@@ -45,7 +49,7 @@
                 <h2 class="font-mono font-bold text-white uppercase tracking-wider text-sm">{title}</h2>
                 <button
                     class="text-[#808090] hover:text-neon-cyan transition-colors text-xl leading-none"
-                    on:click={close}
+                    onclick={close}
                 >
                     ×
                 </button>
@@ -53,14 +57,16 @@
         {:else}
             <button
                 class="absolute top-4 right-4 text-[#808090] hover:text-neon-cyan transition-colors text-xl leading-none z-10"
-                on:click={close}
+                onclick={close}
             >
                 ×
             </button>
         {/if}
 
         <div class="overflow-y-auto max-h-[85vh]">
-            <slot />
+            {#if children}
+                {@render children()}
+            {/if}
         </div>
     </div>
 </div>

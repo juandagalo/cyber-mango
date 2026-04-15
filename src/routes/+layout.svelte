@@ -1,5 +1,7 @@
 <script>
   import '../app.css';
+
+  let { children } = $props();
 </script>
 
 <div class="h-screen flex flex-col bg-[#0a0a0f] text-[#e0e0e0] font-mono overflow-hidden">
@@ -12,6 +14,6 @@
     </div>
   </header>
   <main class="flex-1 min-h-0 overflow-hidden">
-    <slot />
+    {@render children()}
   </main>
 </div>

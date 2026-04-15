@@ -5,7 +5,7 @@
     import Toast from '$lib/components/ui/Toast.svelte';
     import { onMount } from 'svelte';
 
-    export let data: PageData;
+    let { data }: { data: PageData } = $props();
 
     onMount(() => {
         if (data.board) {
@@ -13,9 +13,11 @@
         }
     });
 
-    $: if (data.board) {
-        boardStore.set(data.board);
-    }
+    $effect(() => {
+        if (data.board) {
+            boardStore.set(data.board);
+        }
+    });
 </script>
 
 <Toast />

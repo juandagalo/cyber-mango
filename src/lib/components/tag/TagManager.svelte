@@ -1,27 +1,26 @@
 <script lang="ts">
-    import { createEventDispatcher } from 'svelte';
     import type { Tag } from '$lib/types/board.js';
     import Modal from '$lib/components/ui/Modal.svelte';
     import ConfirmDialog from '$lib/components/ui/ConfirmDialog.svelte';
     import { addToast } from '$lib/stores/toast.js';
 
-    export let boardId: string;
-
-    const dispatch = createEventDispatcher();
+    let { boardId, onclose }: {
+        boardId: string;
+        onclose?: () => void;
+    } = $props();
 
     interface TagWithCount extends Tag {
         cardCount?: number;
     }
 
-    let tags: TagWithCount[] = [];
-    let loading = true;
-    let tagToDelete: Tag | null = null;
-    let deletingTag = false;
+    let tags = $state<TagWithCount[]>([]);
+    let loading = $state(true);
+    let tagToDelete = $state<Tag | null>(null);
+    let deletingTag = $state(false);
 
-    // Editing state per tag
-    let editingId: string | null = null;
-    let editName = '';
-    let editColor = '';
+    let editingId = $state<string | null>(null);
+    let editName = $state('');
+    let editColor = $state('');
 
     async function loadTags() {
         loading = true;
@@ -87,11 +86,10 @@
         }
     }
 
-    // New tag creation
-    let creatingNew = false;
-    let newName = '';
-    let newColor = '#BF00FF';
-    let savingNew = false;
+    let creatingNew = $state(false);
+    let newName = $state('');
+    let newColor = $state('#BF00FF');
+    let savingNew = $state(false);
 
     async function createTag() {
         const name = newName.trim();
@@ -125,12 +123,12 @@
     <ConfirmDialog
         message="Delete tag '{tagToDelete.name}'? It will be removed from all cards."
         loading={deletingTag}
-        on:confirm={deleteTag}
-        on:cancel={() => (tagToDelete = null)}
+        onconfirm={deleteTag}
+        oncancel={() => (tagToDelete = null)}
     />
 {/if}
 
-<Modal title="MANAGE TAGS" maxWidth="max-w-lg" on:close={() => dispatch('close')}>
+<Modal title="MANAGE TAGS" maxWidth="max-w-lg" onclose={() => onclose?.()}>
     <div class="px-6 py-4 flex flex-col gap-4">
 
         {#if loading}
@@ -154,29 +152,29 @@
                                 bind:value={editName}
                                 type="text"
                                 class="flex-1 bg-transparent border-b border-neon-cyan text-white text-xs font-mono focus:outline-none"
-                                on:keydown={(e) => {
+                                onkeydown={(e) => {
                                     if (e.key === 'Enter') saveEdit(tag.id);
                                     if (e.key === 'Escape') cancelEdit();
                                 }}
                             />
                             <button
                                 class="text-xs font-mono text-neon-cyan hover:underline flex-shrink-0"
-                                on:click={() => saveEdit(tag.id)}
+                                onclick={() => saveEdit(tag.id)}
                             >Save</button>
                             <button
                                 class="text-xs font-mono text-[#808090] hover:text-neon-cyan flex-shrink-0"
-                                on:click={cancelEdit}
+                                onclick={cancelEdit}
                             >✕</button>
                         {:else}
                             <span class="w-3 h-3 rounded-full flex-shrink-0" style="background: {tag.color}; box-shadow: 0 0 4px {tag.color};"></span>
                             <span class="flex-1 text-xs font-mono text-[#e0e0e0] truncate">{tag.name}</span>
                             <button
                                 class="text-[10px] font-mono text-[#808090] hover:text-neon-cyan transition-colors flex-shrink-0 px-1"
-                                on:click={() => startEdit(tag)}
+                                onclick={() => startEdit(tag)}
                             >Edit</button>
                             <button
                                 class="text-[10px] font-mono text-[#808090] hover:text-neon-red transition-colors flex-shrink-0 px-1"
-                                on:click={() => (tagToDelete = tag)}
+                                onclick={() => (tagToDelete = tag)}
                             >✕</button>
                         {/if}
                     </div>
@@ -195,20 +193,20 @@
                             type="text"
                             placeholder="New tag name..."
                             class="flex-1 bg-[#0a0a0f] border border-[rgba(0,255,255,0.2)] rounded px-3 py-1.5 text-xs font-mono text-white placeholder:text-[#404060] focus:outline-none focus:border-neon-cyan"
-                            on:keydown={(e) => { if (e.key === 'Enter') createTag(); if (e.key === 'Escape') creatingNew = false; }}
+                            onkeydown={(e) => { if (e.key === 'Enter') createTag(); if (e.key === 'Escape') creatingNew = false; }}
                         />
                     </div>
                     <div class="flex gap-2">
                         <button
                             class="flex-1 py-1.5 text-xs font-mono uppercase tracking-wider border border-neon-cyan text-neon-cyan hover:bg-neon-cyan hover:text-[#0a0a0f] rounded transition-all disabled:opacity-50"
-                            on:click={createTag}
+                            onclick={createTag}
                             disabled={savingNew}
                         >
                             {savingNew ? 'Creating...' : 'Create Tag'}
                         </button>
                         <button
                             class="px-3 py-1.5 text-xs font-mono text-[#808090] hover:text-neon-cyan border border-[rgba(0,255,255,0.1)] rounded transition-all"
-                            on:click={() => (creatingNew = false)}
+                            onclick={() => (creatingNew = false)}
                         >
                             Cancel
                         </button>
@@ -217,7 +215,7 @@
             {:else}
                 <button
                     class="w-full py-2 text-xs font-mono uppercase tracking-wider text-[#808090] hover:text-neon-cyan border border-dashed border-[rgba(0,255,255,0.15)] rounded transition-all flex items-center justify-center gap-2"
-                    on:click={() => (creatingNew = true)}
+                    onclick={() => (creatingNew = true)}
                 >
                     <span>+</span> Add New Tag
                 </button>

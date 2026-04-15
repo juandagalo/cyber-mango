@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { createEventDispatcher } from 'svelte';
+    import { untrack } from 'svelte';
     import { dndzone, SHADOW_ITEM_MARKER_PROPERTY_NAME } from 'svelte-dnd-action';
     import type { ColumnWithCards, CardWithTags } from '$lib/types/board.js';
     import Card from '$lib/components/card/Card.svelte';
@@ -9,37 +9,40 @@
     import { boardStore, moveCardInStore } from '$lib/stores/board.js';
     import { addToast } from '$lib/stores/toast.js';
 
-    export let column: ColumnWithCards;
-
-    const dispatch = createEventDispatcher();
+    let { column, onrefresh, onopencard }: {
+        column: ColumnWithCards;
+        onrefresh?: () => void;
+        onopencard?: (card: CardWithTags) => void;
+    } = $props();
 
     // Local items for DnD
-    let items: CardWithTags[] = [];
-    $: items = [...column.cards];
+    let items = $state<CardWithTags[]>(untrack(() => [...column.cards]));
+    $effect(() => {
+        items = [...column.cards];
+    });
 
     // Menu state
-    let menuOpen = false;
-    let showConfirmDelete = false;
-    let deletingColumn = false;
+    let menuOpen = $state(false);
+    let showConfirmDelete = $state(false);
+    let deletingColumn = $state(false);
 
     // Rename state
-    let renaming = false;
-    let renameValue = '';
-    let renameInput: HTMLInputElement;
+    let renaming = $state(false);
+    let renameValue = $state('');
+    let renameInput = $state<HTMLInputElement | undefined>(undefined);
 
     // Color picker state
-    let editingColor = false;
-    let colorValue = column.color ?? '#00FFFF';
+    let editingColor = $state(false);
+    let colorValue = $state(untrack(() => column.color ?? '#00FFFF'));
 
     // WIP limit state
-    let editingWip = false;
-    let wipValue = column.wipLimit?.toString() ?? '';
+    let editingWip = $state(false);
+    let wipValue = $state(untrack(() => column.wipLimit?.toString() ?? ''));
 
-    // Derived: WIP exceeded
-    $: wipExceeded = column.wipLimit !== null && column.cards.length > column.wipLimit;
-
+    // Derived
+    const wipExceeded = $derived(column.wipLimit !== null && column.cards.length > column.wipLimit);
     const defaultColor = '#00FFFF';
-    $: headerColor = column.color ?? defaultColor;
+    const headerColor = $derived(column.color ?? defaultColor);
 
     // DnD handlers
     function handleDndConsider(e: CustomEvent<{ items: CardWithTags[] }>) {
@@ -61,7 +64,6 @@
         const prev = newItems[newIdx - 1];
         const next = newItems[newIdx + 1];
 
-        // Calculate new position using midpoint between neighbors
         let newPosition: number;
         if (!prev && !next) {
             newPosition = 1000;
@@ -76,7 +78,6 @@
         const originalColumnId = movedCard.columnId;
         const targetColumnId = column.id;
 
-        // Optimistic update
         moveCardInStore(movedCard.id, originalColumnId, targetColumnId, newPosition);
 
         try {
@@ -87,12 +88,11 @@
             });
             if (!res.ok) {
                 addToast('Failed to move card — reverting');
-                // Revert by re-fetching
-                dispatch('refresh');
+                onrefresh?.();
             }
         } catch {
             addToast('Failed to move card — reverting');
-            dispatch('refresh');
+            onrefresh?.();
         }
     }
 
@@ -119,7 +119,7 @@
             if (!res.ok) {
                 addToast('Failed to rename column');
             } else {
-                dispatch('refresh');
+                onrefresh?.();
             }
         } catch {
             addToast('Failed to rename column');
@@ -132,7 +132,6 @@
         if (e.key === 'Escape') renaming = false;
     }
 
-    // Change color
     async function submitColor() {
         editingColor = false;
         menuOpen = false;
@@ -146,14 +145,13 @@
             if (!res.ok) {
                 addToast('Failed to update column color');
             } else {
-                dispatch('refresh');
+                onrefresh?.();
             }
         } catch {
             addToast('Failed to update column color');
         }
     }
 
-    // WIP limit
     async function submitWipLimit() {
         editingWip = false;
         menuOpen = false;
@@ -171,14 +169,13 @@
             if (!res.ok) {
                 addToast('Failed to update WIP limit');
             } else {
-                dispatch('refresh');
+                onrefresh?.();
             }
         } catch {
             addToast('Failed to update WIP limit');
         }
     }
 
-    // Delete column
     async function deleteColumn() {
         deletingColumn = true;
         try {
@@ -187,7 +184,7 @@
                 addToast('Failed to delete column');
             } else {
                 showConfirmDelete = false;
-                dispatch('refresh');
+                onrefresh?.();
             }
         } catch {
             addToast('Failed to delete column');
@@ -196,24 +193,22 @@
         }
     }
 
-    // Open card detail
-    function openCard(e: CustomEvent<CardWithTags>) {
-        dispatch('openCard', e.detail);
+    function openCard(card: CardWithTags) {
+        onopencard?.(card);
     }
 
-    // Close menu on click outside
     function handleMenuKeydown(e: KeyboardEvent) {
         if (e.key === 'Escape') menuOpen = false;
     }
 </script>
 
-<!-- svelte-ignore a11y-click-events-have-key-events a11y-no-static-element-interactions -->
+<!-- svelte-ignore a11y_click_events_have_key_events a11y_no_static_element_interactions -->
 {#if showConfirmDelete}
     <ConfirmDialog
         message="Delete column '{column.name}'? This will delete all {column.cards.length} card(s) inside it. This cannot be undone."
         loading={deletingColumn}
-        on:confirm={deleteColumn}
-        on:cancel={() => (showConfirmDelete = false)}
+        onconfirm={deleteColumn}
+        oncancel={() => (showConfirmDelete = false)}
     />
 {/if}
 
@@ -230,13 +225,13 @@
                 bind:this={renameInput}
                 bind:value={renameValue}
                 class="flex-1 bg-transparent border-b border-neon-cyan text-white text-xs font-mono uppercase tracking-wider focus:outline-none"
-                on:keydown={handleRenameKeydown}
-                on:blur={submitRename}
+                onkeydown={handleRenameKeydown}
+                onblur={submitRename}
             />
         {:else}
             <button
                 class="flex-1 text-left bg-transparent border-none p-0 text-white text-xs font-mono font-bold uppercase tracking-wider cursor-pointer hover:text-neon-cyan transition-colors truncate"
-                on:click={startRename}
+                onclick={startRename}
                 title="Click to rename"
             >
                 {column.name}
@@ -259,30 +254,31 @@
         <div class="relative">
             <button
                 class="w-6 h-6 flex items-center justify-center text-[#808090] hover:text-neon-cyan transition-colors rounded"
-                on:click|stopPropagation={() => (menuOpen = !menuOpen)}
-                on:keydown={handleMenuKeydown}
+                onclick={(e: MouseEvent) => { e.stopPropagation(); menuOpen = !menuOpen; }}
+                onkeydown={handleMenuKeydown}
                 title="Column options"
             >
                 ⋮
             </button>
 
             {#if menuOpen}
-                <!-- svelte-ignore a11y-click-events-have-key-events a11y-no-static-element-interactions -->
+                <!-- svelte-ignore a11y_click_events_have_key_events -->
                 <div
                     class="absolute right-0 top-full mt-1 w-44 z-20 rounded overflow-hidden"
                     style="background: #1a1a2e; border: 1px solid rgba(0,255,255,0.2); box-shadow: 0 8px 24px rgba(0,0,0,0.6);"
-                    on:click|stopPropagation
+                    onclick={(e: MouseEvent) => e.stopPropagation()}
+                    role="presentation"
                 >
                     <button
                         class="w-full text-left px-3 py-2 text-xs font-mono text-[#e0e0e0] hover:bg-[rgba(0,255,255,0.08)] hover:text-neon-cyan transition-colors"
-                        on:click={startRename}
+                        onclick={startRename}
                     >
                         Rename
                     </button>
 
                     <button
                         class="w-full text-left px-3 py-2 text-xs font-mono text-[#e0e0e0] hover:bg-[rgba(0,255,255,0.08)] hover:text-neon-cyan transition-colors flex items-center gap-2"
-                        on:click={() => { editingColor = !editingColor; editingWip = false; }}
+                        onclick={() => { editingColor = !editingColor; editingWip = false; }}
                     >
                         <span>Set Color</span>
                         <span class="w-3 h-3 rounded-full ml-auto" style="background: {headerColor};"></span>
@@ -297,14 +293,14 @@
                             />
                             <button
                                 class="text-xs font-mono text-neon-cyan hover:underline"
-                                on:click={submitColor}
+                                onclick={submitColor}
                             >Apply</button>
                         </div>
                     {/if}
 
                     <button
                         class="w-full text-left px-3 py-2 text-xs font-mono text-[#e0e0e0] hover:bg-[rgba(0,255,255,0.08)] hover:text-neon-cyan transition-colors"
-                        on:click={() => { editingWip = !editingWip; editingColor = false; }}
+                        onclick={() => { editingWip = !editingWip; editingColor = false; }}
                     >
                         WIP Limit {column.wipLimit !== null ? `(${column.wipLimit})` : ''}
                     </button>
@@ -320,7 +316,7 @@
                             />
                             <button
                                 class="text-xs font-mono text-neon-cyan hover:underline"
-                                on:click={submitWipLimit}
+                                onclick={submitWipLimit}
                             >Apply</button>
                         </div>
                     {/if}
@@ -328,7 +324,7 @@
                     <div class="border-t border-[rgba(255,0,64,0.2)] mt-1"></div>
                     <button
                         class="w-full text-left px-3 py-2 text-xs font-mono text-neon-red hover:bg-[rgba(255,0,64,0.08)] transition-colors"
-                        on:click={() => { showConfirmDelete = true; menuOpen = false; }}
+                        onclick={() => { showConfirmDelete = true; menuOpen = false; }}
                     >
                         Delete Column
                     </button>
@@ -345,12 +341,12 @@
             type: 'card',
             dropTargetStyle: { outline: '1px dashed rgba(0,255,255,0.3)', outlineOffset: '-2px' }
         }}
-        on:consider={handleDndConsider}
-        on:finalize={handleDndFinalize}
+        onconsider={handleDndConsider}
+        onfinalize={handleDndFinalize}
     >
         {#each items as card (card.id)}
             <div class="card-wrapper">
-                <Card {card} on:open={openCard} />
+                <Card {card} onopen={openCard} />
             </div>
         {/each}
         {#if items.length === 0}
@@ -366,8 +362,8 @@
 
 <!-- Close menu on outside click -->
 {#if menuOpen}
-    <!-- svelte-ignore a11y-click-events-have-key-events a11y-no-static-element-interactions -->
-    <div class="fixed inset-0 z-10" on:click={() => (menuOpen = false)} role="presentation"></div>
+    <!-- svelte-ignore a11y_click_events_have_key_events a11y_no_static_element_interactions -->
+    <div class="fixed inset-0 z-10" onclick={() => (menuOpen = false)} role="presentation"></div>
 {/if}
 
 <style>

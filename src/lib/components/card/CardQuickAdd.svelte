@@ -1,14 +1,14 @@
 <script lang="ts">
-    import { createEventDispatcher } from 'svelte';
     import { addCardToStore } from '$lib/stores/board.js';
     import { addToast } from '$lib/stores/toast.js';
 
-    export let columnId: string;
+    let { columnId, oncreated }: {
+        columnId: string;
+        oncreated?: (card: any) => void;
+    } = $props();
 
-    const dispatch = createEventDispatcher();
-
-    let inputValue = '';
-    let loading = false;
+    let inputValue = $state('');
+    let loading = $state(false);
     let inputEl: HTMLInputElement;
 
     async function handleKeydown(e: KeyboardEvent) {
@@ -41,7 +41,7 @@
             const { card } = await res.json();
             addCardToStore(columnId, card);
             inputValue = '';
-            dispatch('created', card);
+            oncreated?.(card);
         } catch {
             addToast('Failed to create card');
         } finally {
@@ -58,6 +58,6 @@
         placeholder="+ Add card..."
         disabled={loading}
         class="w-full bg-transparent border border-[rgba(0,255,255,0.1)] rounded px-3 py-1.5 text-xs font-mono text-[#808090] placeholder:text-[#404060] focus:outline-none focus:border-[rgba(0,255,255,0.4)] focus:text-[#e0e0e0] transition-colors disabled:opacity-50"
-        on:keydown={handleKeydown}
+        onkeydown={handleKeydown}
     />
 </div>

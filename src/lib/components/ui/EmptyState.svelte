@@ -1,5 +1,5 @@
 <script lang="ts">
-    export let message = 'No cards yet';
+    let { message = 'No cards yet' }: { message?: string } = $props();
 </script>
 
 <div class="flex flex-col items-center justify-center py-8 px-4 text-center">

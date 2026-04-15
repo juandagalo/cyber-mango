@@ -1,11 +1,11 @@
 <script lang="ts">
     import type { Tag } from '$lib/types/board.js';
 
-    export let tag: Tag;
-    export let removable = false;
-    import { createEventDispatcher } from 'svelte';
-
-    const dispatch = createEventDispatcher();
+    let { tag, removable = false, onremove }: {
+        tag: Tag;
+        removable?: boolean;
+        onremove?: (id: string) => void;
+    } = $props();
 
     function hexToRgb(hex: string): string {
         const r = parseInt(hex.slice(1, 3), 16);
@@ -14,7 +14,7 @@
         return `${r},${g},${b}`;
     }
 
-    $: rgb = hexToRgb(tag.color.startsWith('#') ? tag.color : '#6366f1');
+    const rgb = $derived(hexToRgb(tag.color.startsWith('#') ? tag.color : '#6366f1'));
 </script>
 
 <span
@@ -30,7 +30,7 @@
         <button
             class="hover:opacity-80 leading-none ml-0.5"
             style="color: {tag.color};"
-            on:click|stopPropagation={() => dispatch('remove', tag.id)}
+            onclick={(e: MouseEvent) => { e.stopPropagation(); onremove?.(tag.id); }}
             title="Remove tag"
         >
             ×

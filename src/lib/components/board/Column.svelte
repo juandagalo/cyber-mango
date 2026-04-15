@@ -234,14 +234,13 @@
                 on:blur={submitRename}
             />
         {:else}
-            <!-- svelte-ignore a11y-click-events-have-key-events -->
-            <span
-                class="flex-1 text-white text-xs font-mono font-bold uppercase tracking-wider cursor-pointer hover:text-neon-cyan transition-colors truncate"
+            <button
+                class="flex-1 text-left bg-transparent border-none p-0 text-white text-xs font-mono font-bold uppercase tracking-wider cursor-pointer hover:text-neon-cyan transition-colors truncate"
                 on:click={startRename}
                 title="Click to rename"
             >
                 {column.name}
-            </span>
+            </button>
         {/if}
 
         <!-- Card count / WIP badge -->
@@ -268,7 +267,7 @@
             </button>
 
             {#if menuOpen}
-                <!-- svelte-ignore a11y-click-events-have-key-events -->
+                <!-- svelte-ignore a11y-click-events-have-key-events a11y-no-static-element-interactions -->
                 <div
                     class="absolute right-0 top-full mt-1 w-44 z-20 rounded overflow-hidden"
                     style="background: #1a1a2e; border: 1px solid rgba(0,255,255,0.2); box-shadow: 0 8px 24px rgba(0,0,0,0.6);"
@@ -367,8 +366,8 @@
 
 <!-- Close menu on outside click -->
 {#if menuOpen}
-    <!-- svelte-ignore a11y-click-events-have-key-events -->
-    <div class="fixed inset-0 z-10" on:click={() => (menuOpen = false)}></div>
+    <!-- svelte-ignore a11y-click-events-have-key-events a11y-no-static-element-interactions -->
+    <div class="fixed inset-0 z-10" on:click={() => (menuOpen = false)} role="presentation"></div>
 {/if}
 
 <style>

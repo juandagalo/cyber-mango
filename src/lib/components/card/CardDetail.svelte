@@ -187,8 +187,9 @@
 
         <!-- Title -->
         <div class="flex flex-col gap-1.5">
-            <label class="text-[10px] font-mono uppercase tracking-wider text-[#808090]">Title</label>
+            <label for="card-title" class="text-[10px] font-mono uppercase tracking-wider text-[#808090]">Title</label>
             <input
+                id="card-title"
                 bind:value={title}
                 type="text"
                 class="bg-transparent border border-[rgba(0,255,255,0.15)] rounded px-3 py-2 text-sm font-mono text-white focus:outline-none focus:border-neon-cyan transition-colors"
@@ -199,8 +200,9 @@
 
         <!-- Description -->
         <div class="flex flex-col gap-1.5">
-            <label class="text-[10px] font-mono uppercase tracking-wider text-[#808090]">Description</label>
+            <label for="card-desc" class="text-[10px] font-mono uppercase tracking-wider text-[#808090]">Description</label>
             <textarea
+                id="card-desc"
                 bind:value={description}
                 rows="4"
                 placeholder="Add a description..."
@@ -212,7 +214,7 @@
 
         <!-- Priority -->
         <div class="flex flex-col gap-2">
-            <label class="text-[10px] font-mono uppercase tracking-wider text-[#808090]">Priority</label>
+            <span class="text-[10px] font-mono uppercase tracking-wider text-[#808090]">Priority</span>
             <div class="flex gap-2 flex-wrap">
                 {#each priorities as p}
                     <button
@@ -234,7 +236,7 @@
 
         <!-- Tags -->
         <div class="flex flex-col gap-2">
-            <label class="text-[10px] font-mono uppercase tracking-wider text-[#808090]">Tags</label>
+            <span class="text-[10px] font-mono uppercase tracking-wider text-[#808090]">Tags</span>
             <div class="flex flex-wrap gap-1.5 items-center">
                 {#each tags as tag (tag.id)}
                     <TagBadge {tag} />
@@ -248,7 +250,7 @@
                     </button>
 
                     {#if showTagPicker}
-                        <!-- svelte-ignore a11y-click-events-have-key-events -->
+                        <!-- svelte-ignore a11y-click-events-have-key-events a11y-no-static-element-interactions -->
                         <div
                             class="absolute left-0 top-full mt-1 z-30 rounded overflow-hidden"
                             style="background: #12121a; border: 1px solid rgba(0,255,255,0.2); box-shadow: 0 8px 24px rgba(0,0,0,0.6); min-width: 220px;"
@@ -263,9 +265,10 @@
                         </div>
 
                         <!-- Close picker on outside click -->
-                        <!-- svelte-ignore a11y-click-events-have-key-events -->
+                        <!-- svelte-ignore a11y-click-events-have-key-events a11y-no-static-element-interactions -->
                         <div
                             class="fixed inset-0 z-20"
+                            role="presentation"
                             on:click={() => (showTagPicker = false)}
                         ></div>
                     {/if}

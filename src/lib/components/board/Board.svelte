@@ -89,20 +89,27 @@
 <div class="flex flex-col h-full overflow-hidden">
 
 <!-- Board sub-header -->
-<div class="flex items-center justify-between px-6 py-2 border-b border-[rgba(0,255,255,0.06)] flex-shrink-0">
+<div class="flex items-center justify-between px-5 py-2 flex-shrink-0"
+     style="background: rgba(252,238,10,0.02); border-bottom: 1px solid rgba(252,238,10,0.08);">
     <div class="flex items-center gap-3">
-        <span class="font-['Orbitron'] font-bold text-white text-sm uppercase tracking-widest">
-            {board.name}
+        <span class="font-rajdhani font-bold text-cyber-yellow text-sm uppercase tracking-[0.15em]">
+            // {board.name}
         </span>
-        <span class="text-[10px] font-mono text-[#808090] border border-[rgba(0,255,255,0.1)] px-1.5 py-0.5 rounded">
-            {totalCards} CARDS
+        <div class="h-3 w-px bg-[rgba(252,238,10,0.15)]"></div>
+        <span class="text-[10px] font-mono text-[var(--text-muted)] px-1.5 py-0.5"
+              style="border: 1px solid rgba(252,238,10,0.1);">
+            [{totalCards}] CARDS
         </span>
-        <span class="text-[10px] font-mono text-[#808090] border border-[rgba(0,255,255,0.1)] px-1.5 py-0.5 rounded">
-            {columns.length} COLS
+        <span class="text-[10px] font-mono text-[var(--text-muted)] px-1.5 py-0.5"
+              style="border: 1px solid rgba(252,238,10,0.1);">
+            [{columns.length}] COLS
         </span>
     </div>
     <button
-        class="text-xs font-mono uppercase tracking-wider px-3 py-1.5 border border-[rgba(0,255,255,0.2)] text-[#808090] hover:text-neon-cyan hover:border-neon-cyan rounded transition-all"
+        class="text-xs font-rajdhani font-semibold uppercase tracking-[0.1em] px-4 py-1.5 transition-all clip-cyber-sm"
+        style="border: 1px solid rgba(252,238,10,0.2); color: var(--text-muted); background: transparent;"
+        onmouseenter={(e) => { e.currentTarget.style.color = 'var(--cyber-yellow)'; e.currentTarget.style.borderColor = 'var(--cyber-yellow)'; e.currentTarget.style.background = 'rgba(252,238,10,0.05)'; }}
+        onmouseleave={(e) => { e.currentTarget.style.color = 'var(--text-muted)'; e.currentTarget.style.borderColor = 'rgba(252,238,10,0.2)'; e.currentTarget.style.background = 'transparent'; }}
         onclick={() => (showTagManager = true)}
     >
         Manage Tags
@@ -119,7 +126,7 @@
             use:dndzone={{
                 items: columns,
                 type: 'column',
-                dropTargetStyle: { outline: '1px dashed rgba(0,255,255,0.25)', outlineOffset: '-2px' }
+                dropTargetStyle: { outline: '1px dashed rgba(252,238,10,0.25)', outlineOffset: '-2px' }
             }}
             onconsider={handleColumnConsider}
             onfinalize={handleColumnFinalize}

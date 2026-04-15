@@ -9,20 +9,20 @@
     } = $props();
 
     const priorityColors: Record<string, string> = {
-        critical: '#FF0040',
-        high: '#FF00FF',
-        medium: '#00FFFF',
-        low: '#404060'
+        critical: '#FF003C',
+        high: '#ED1E79',
+        medium: '#FCEE0A',
+        low: '#6A6A7A'
     };
 
     const priorityGlows: Record<string, string> = {
-        critical: 'rgba(255,0,64,0.4)',
-        high: 'rgba(255,0,255,0.3)',
-        medium: 'rgba(0,255,255,0.3)',
-        low: 'rgba(64,64,96,0.2)'
+        critical: 'rgba(255,0,60,0.4)',
+        high: 'rgba(237,30,121,0.3)',
+        medium: 'rgba(252,238,10,0.2)',
+        low: 'transparent'
     };
 
-    const borderColor = $derived(priorityColors[card.priority] ?? '#404060');
+    const borderColor = $derived(priorityColors[card.priority] ?? '#6A6A7A');
     const glowColor = $derived(priorityGlows[card.priority] ?? 'transparent');
     const visibleTags = $derived(card.tags.slice(0, 3));
     const extraTagCount = $derived(card.tags.length - 3);
@@ -36,11 +36,11 @@
 
 <!-- svelte-ignore a11y_click_events_have_key_events a11y_no_static_element_interactions -->
 <div
-    class="rounded cursor-pointer select-none transition-all duration-150 px-3 py-2.5"
+    class="cursor-pointer select-none transition-all duration-150 px-3 py-2.5 corner-brackets hover-sweep"
     style="
-        background: #1a1a2e;
+        background: var(--bg-card);
         border-left: 2px solid {borderColor};
-        {hovered ? `box-shadow: -2px 0 8px ${glowColor}, 0 0 12px ${glowColor};` : 'box-shadow: none;'}
+        {hovered ? `box-shadow: -2px 0 8px ${glowColor}, 0 0 15px ${glowColor}; background: var(--bg-elevated);` : 'box-shadow: none;'}
     "
     onmouseenter={() => (hovered = true)}
     onmouseleave={() => (hovered = false)}
@@ -50,7 +50,7 @@
     onkeydown={(e) => e.key === 'Enter' && handleClick()}
 >
     <div class="flex flex-col gap-1.5">
-        <p class="text-[#e0e0e0] text-sm font-mono leading-snug break-words">{card.title}</p>
+        <p class="text-sm font-rajdhani font-semibold leading-snug break-words" style="color: var(--text-primary);">{card.title}</p>
 
         <div class="flex items-center justify-between gap-2 flex-wrap">
             <PriorityBadge priority={card.priority} />
@@ -61,7 +61,7 @@
                         <TagBadge {tag} />
                     {/each}
                     {#if extraTagCount > 0}
-                        <span class="text-[10px] text-[#808090] font-mono">+{extraTagCount}</span>
+                        <span class="text-[10px] font-mono" style="color: var(--text-muted);">+{extraTagCount}</span>
                     {/if}
                 </div>
             {/if}

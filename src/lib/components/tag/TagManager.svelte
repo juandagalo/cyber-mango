@@ -88,7 +88,7 @@
 
     let creatingNew = $state(false);
     let newName = $state('');
-    let newColor = $state('#BF00FF');
+    let newColor = $state('#FCEE0A');
     let savingNew = $state(false);
 
     async function createTag() {
@@ -132,50 +132,61 @@
     <div class="px-6 py-4 flex flex-col gap-4">
 
         {#if loading}
-            <p class="text-[#808090] text-xs font-mono text-center py-8">Loading tags...</p>
+            <p class="text-xs font-rajdhani text-center py-8" style="color: var(--text-muted);">Loading tags...</p>
         {:else if tags.length === 0}
-            <p class="text-[#808090] text-xs font-mono text-center py-8">No tags yet. Create one below.</p>
+            <p class="text-xs font-rajdhani text-center py-8" style="color: var(--text-muted);">No tags yet. Create one below.</p>
         {:else}
             <div class="flex flex-col gap-1">
                 {#each tags as tag (tag.id)}
                     <div
-                        class="flex items-center gap-3 px-3 py-2 rounded"
-                        style="background: #1a1a2e;"
+                        class="flex items-center gap-3 px-3 py-2"
+                        style="background: var(--bg-card);"
                     >
                         {#if editingId === tag.id}
                             <input
                                 type="color"
                                 bind:value={editColor}
-                                class="w-8 h-6 rounded cursor-pointer flex-shrink-0"
+                                class="w-8 h-6 cursor-pointer flex-shrink-0"
                             />
                             <input
                                 bind:value={editName}
                                 type="text"
-                                class="flex-1 bg-transparent border-b border-neon-cyan text-white text-xs font-mono focus:outline-none"
+                                class="flex-1 bg-transparent text-white text-xs font-rajdhani font-semibold focus:outline-none"
+                                style="border-bottom: 1px solid var(--cyber-yellow);"
                                 onkeydown={(e) => {
                                     if (e.key === 'Enter') saveEdit(tag.id);
                                     if (e.key === 'Escape') cancelEdit();
                                 }}
                             />
                             <button
-                                class="text-xs font-mono text-neon-cyan hover:underline flex-shrink-0"
+                                class="text-xs font-rajdhani font-bold flex-shrink-0 uppercase"
+                                style="color: var(--cyber-yellow);"
                                 onclick={() => saveEdit(tag.id)}
                             >Save</button>
                             <button
-                                class="text-xs font-mono text-[#808090] hover:text-neon-cyan flex-shrink-0"
+                                class="text-xs flex-shrink-0 transition-colors"
+                                style="color: var(--text-muted);"
+                                onmouseenter={(e) => e.currentTarget.style.color = 'var(--cyber-yellow)'}
+                                onmouseleave={(e) => e.currentTarget.style.color = 'var(--text-muted)'}
                                 onclick={cancelEdit}
-                            >✕</button>
+                            >x</button>
                         {:else}
-                            <span class="w-3 h-3 rounded-full flex-shrink-0" style="background: {tag.color}; box-shadow: 0 0 4px {tag.color};"></span>
-                            <span class="flex-1 text-xs font-mono text-[#e0e0e0] truncate">{tag.name}</span>
+                            <span class="w-3 h-3 flex-shrink-0" style="background: {tag.color}; box-shadow: 0 0 4px {tag.color};"></span>
+                            <span class="flex-1 text-xs font-rajdhani font-semibold truncate" style="color: var(--text-primary);">{tag.name}</span>
                             <button
-                                class="text-[10px] font-mono text-[#808090] hover:text-neon-cyan transition-colors flex-shrink-0 px-1"
+                                class="text-[10px] font-rajdhani font-bold uppercase flex-shrink-0 px-1 transition-colors"
+                                style="color: var(--text-muted);"
+                                onmouseenter={(e) => e.currentTarget.style.color = 'var(--cyber-yellow)'}
+                                onmouseleave={(e) => e.currentTarget.style.color = 'var(--text-muted)'}
                                 onclick={() => startEdit(tag)}
                             >Edit</button>
                             <button
-                                class="text-[10px] font-mono text-[#808090] hover:text-neon-red transition-colors flex-shrink-0 px-1"
+                                class="text-[10px] flex-shrink-0 px-1 transition-colors"
+                                style="color: var(--text-muted);"
+                                onmouseenter={(e) => e.currentTarget.style.color = 'var(--cyber-red-bright)'}
+                                onmouseleave={(e) => e.currentTarget.style.color = 'var(--text-muted)'}
                                 onclick={() => (tagToDelete = tag)}
-                            >✕</button>
+                            >x</button>
                         {/if}
                     </div>
                 {/each}
@@ -183,29 +194,38 @@
         {/if}
 
         <!-- Create new -->
-        <div class="border-t border-[rgba(0,255,255,0.1)] pt-4">
+        <div class="pt-4" style="border-top: 1px solid rgba(252,238,10,0.08);">
             {#if creatingNew}
                 <div class="flex flex-col gap-2">
                     <div class="flex items-center gap-2">
-                        <input type="color" bind:value={newColor} class="w-8 h-8 rounded cursor-pointer" />
+                        <input type="color" bind:value={newColor} class="w-8 h-8 cursor-pointer" />
                         <input
                             bind:value={newName}
                             type="text"
                             placeholder="New tag name..."
-                            class="flex-1 bg-[#0a0a0f] border border-[rgba(0,255,255,0.2)] rounded px-3 py-1.5 text-xs font-mono text-white placeholder:text-[#404060] focus:outline-none focus:border-neon-cyan"
+                            class="flex-1 bg-cyber-dark px-3 py-1.5 text-xs font-rajdhani font-semibold text-white focus:outline-none transition-colors"
+                            style="border: 1px solid rgba(252,238,10,0.15);"
+                            onfocus={(e) => e.currentTarget.style.borderColor = 'var(--cyber-yellow)'}
+                            onblur={(e) => e.currentTarget.style.borderColor = 'rgba(252,238,10,0.15)'}
                             onkeydown={(e) => { if (e.key === 'Enter') createTag(); if (e.key === 'Escape') creatingNew = false; }}
                         />
                     </div>
                     <div class="flex gap-2">
                         <button
-                            class="flex-1 py-1.5 text-xs font-mono uppercase tracking-wider border border-neon-cyan text-neon-cyan hover:bg-neon-cyan hover:text-[#0a0a0f] rounded transition-all disabled:opacity-50"
+                            class="flex-1 py-1.5 text-xs font-rajdhani font-bold uppercase tracking-wider transition-all clip-cyber-sm disabled:opacity-50"
+                            style="border: 1px solid var(--cyber-yellow); color: var(--cyber-yellow);"
+                            onmouseenter={(e) => { e.currentTarget.style.background = 'var(--cyber-yellow)'; e.currentTarget.style.color = '#0D0D12'; }}
+                            onmouseleave={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'var(--cyber-yellow)'; }}
                             onclick={createTag}
                             disabled={savingNew}
                         >
                             {savingNew ? 'Creating...' : 'Create Tag'}
                         </button>
                         <button
-                            class="px-3 py-1.5 text-xs font-mono text-[#808090] hover:text-neon-cyan border border-[rgba(0,255,255,0.1)] rounded transition-all"
+                            class="px-3 py-1.5 text-xs font-rajdhani font-semibold uppercase transition-all"
+                            style="color: var(--text-muted); border: 1px solid rgba(252,238,10,0.1);"
+                            onmouseenter={(e) => { e.currentTarget.style.color = 'var(--cyber-yellow)'; e.currentTarget.style.borderColor = 'var(--cyber-yellow)'; }}
+                            onmouseleave={(e) => { e.currentTarget.style.color = 'var(--text-muted)'; e.currentTarget.style.borderColor = 'rgba(252,238,10,0.1)'; }}
                             onclick={() => (creatingNew = false)}
                         >
                             Cancel
@@ -214,7 +234,10 @@
                 </div>
             {:else}
                 <button
-                    class="w-full py-2 text-xs font-mono uppercase tracking-wider text-[#808090] hover:text-neon-cyan border border-dashed border-[rgba(0,255,255,0.15)] rounded transition-all flex items-center justify-center gap-2"
+                    class="w-full py-2 text-xs font-rajdhani font-semibold uppercase tracking-wider transition-all flex items-center justify-center gap-2"
+                    style="color: var(--text-muted); border: 1px dashed rgba(252,238,10,0.12);"
+                    onmouseenter={(e) => { e.currentTarget.style.color = 'var(--cyber-yellow)'; e.currentTarget.style.borderColor = 'rgba(252,238,10,0.3)'; }}
+                    onmouseleave={(e) => { e.currentTarget.style.color = 'var(--text-muted)'; e.currentTarget.style.borderColor = 'rgba(252,238,10,0.12)'; }}
                     onclick={() => (creatingNew = true)}
                 >
                     <span>+</span> Add New Tag

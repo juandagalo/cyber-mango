@@ -212,25 +212,32 @@
     />
 {/if}
 
-<div class="flex flex-col flex-shrink-0 w-[280px] h-full rounded-lg overflow-hidden"
-     style="background: #12121a; border: 1px solid rgba(0,255,255,0.08);">
+<div class="flex flex-col flex-shrink-0 w-[280px] h-full overflow-hidden"
+     style="background: var(--bg-surface); border: 1px solid rgba(252,238,10,0.06);">
 
     <!-- Column Header -->
-    <div class="flex items-center gap-2 px-3 py-2.5 flex-shrink-0"
-         style="border-bottom: 1px solid {headerColor}30;">
-        <div class="w-2 h-2 rounded-full flex-shrink-0" style="background: {headerColor}; box-shadow: 0 0 4px {headerColor};"></div>
+    <div class="flex items-center gap-2 px-3 py-2 flex-shrink-0 relative"
+         style="background: linear-gradient(90deg, {headerColor}10, transparent);
+                border-bottom: 2px solid {headerColor}50;">
+
+        <!-- Color accent bar -->
+        <div class="absolute left-0 top-0 bottom-0 w-[3px]" style="background: {headerColor};"></div>
 
         {#if renaming}
             <input
                 bind:this={renameInput}
                 bind:value={renameValue}
-                class="flex-1 bg-transparent border-b border-neon-cyan text-white text-xs font-mono uppercase tracking-wider focus:outline-none"
+                class="flex-1 bg-transparent border-b text-white text-xs font-rajdhani font-bold uppercase tracking-[0.12em] focus:outline-none ml-1"
+                style="border-color: {headerColor};"
                 onkeydown={handleRenameKeydown}
                 onblur={submitRename}
             />
         {:else}
             <button
-                class="flex-1 text-left bg-transparent border-none p-0 text-white text-xs font-mono font-bold uppercase tracking-wider cursor-pointer hover:text-neon-cyan transition-colors truncate"
+                class="flex-1 text-left bg-transparent border-none p-0 text-white text-xs font-rajdhani font-bold uppercase tracking-[0.12em] cursor-pointer transition-colors truncate ml-1"
+                style="--hover-color: {headerColor};"
+                onmouseenter={(e) => e.currentTarget.style.color = headerColor}
+                onmouseleave={(e) => e.currentTarget.style.color = 'white'}
                 onclick={startRename}
                 title="Click to rename"
             >
@@ -240,12 +247,10 @@
 
         <!-- Card count / WIP badge -->
         <span
-            class="text-[10px] font-mono px-1.5 py-0.5 rounded"
-            class:text-neon-red={wipExceeded}
-            class:border-neon-red={wipExceeded}
-            class:text-[#808090]={!wipExceeded}
-            class:border-[rgba(0,255,255,0.1)]={!wipExceeded}
-            style="border: 1px solid; {wipExceeded ? 'background: rgba(255,0,64,0.1);' : ''}"
+            class="text-[10px] font-mono px-1.5 py-0.5"
+            style="border: 1px solid {wipExceeded ? 'var(--cyber-red-bright)' : 'rgba(252,238,10,0.12)'};
+                   color: {wipExceeded ? 'var(--cyber-red-bright)' : 'var(--text-muted)'};
+                   {wipExceeded ? 'background: rgba(255,0,60,0.1);' : ''}"
         >
             {column.cards.length}{column.wipLimit !== null ? `/${column.wipLimit}` : ''}
         </span>
@@ -253,7 +258,10 @@
         <!-- Kebab menu -->
         <div class="relative">
             <button
-                class="w-6 h-6 flex items-center justify-center text-[#808090] hover:text-neon-cyan transition-colors rounded"
+                class="w-6 h-6 flex items-center justify-center transition-colors"
+                style="color: var(--text-muted);"
+                onmouseenter={(e) => e.currentTarget.style.color = 'var(--cyber-yellow)'}
+                onmouseleave={(e) => e.currentTarget.style.color = 'var(--text-muted)'}
                 onclick={(e: MouseEvent) => { e.stopPropagation(); menuOpen = !menuOpen; }}
                 onkeydown={handleMenuKeydown}
                 title="Column options"
@@ -264,24 +272,24 @@
             {#if menuOpen}
                 <!-- svelte-ignore a11y_click_events_have_key_events -->
                 <div
-                    class="absolute right-0 top-full mt-1 w-44 z-20 rounded overflow-hidden"
-                    style="background: #1a1a2e; border: 1px solid rgba(0,255,255,0.2); box-shadow: 0 8px 24px rgba(0,0,0,0.6);"
+                    class="absolute right-0 top-full mt-1 w-44 z-20 overflow-hidden clip-cyber-sm"
+                    style="background: var(--bg-card); border: 1px solid rgba(252,238,10,0.2); box-shadow: 0 8px 24px rgba(0,0,0,0.7), 0 0 12px rgba(252,238,10,0.05);"
                     onclick={(e: MouseEvent) => e.stopPropagation()}
                     role="presentation"
                 >
                     <button
-                        class="w-full text-left px-3 py-2 text-xs font-mono text-[#e0e0e0] hover:bg-[rgba(0,255,255,0.08)] hover:text-neon-cyan transition-colors"
+                        class="w-full text-left px-3 py-2 text-xs font-rajdhani font-semibold uppercase tracking-wider text-[#D4D4D4] hover:bg-[rgba(252,238,10,0.06)] hover:text-cyber-yellow transition-colors"
                         onclick={startRename}
                     >
                         Rename
                     </button>
 
                     <button
-                        class="w-full text-left px-3 py-2 text-xs font-mono text-[#e0e0e0] hover:bg-[rgba(0,255,255,0.08)] hover:text-neon-cyan transition-colors flex items-center gap-2"
+                        class="w-full text-left px-3 py-2 text-xs font-rajdhani font-semibold uppercase tracking-wider text-[#D4D4D4] hover:bg-[rgba(252,238,10,0.06)] hover:text-cyber-yellow transition-colors flex items-center gap-2"
                         onclick={() => { editingColor = !editingColor; editingWip = false; }}
                     >
                         <span>Set Color</span>
-                        <span class="w-3 h-3 rounded-full ml-auto" style="background: {headerColor};"></span>
+                        <span class="w-3 h-3 ml-auto" style="background: {headerColor};"></span>
                     </button>
 
                     {#if editingColor}
@@ -289,17 +297,17 @@
                             <input
                                 type="color"
                                 bind:value={colorValue}
-                                class="w-8 h-6 cursor-pointer rounded border-0 p-0 bg-transparent"
+                                class="w-8 h-6 cursor-pointer border-0 p-0 bg-transparent"
                             />
                             <button
-                                class="text-xs font-mono text-neon-cyan hover:underline"
+                                class="text-xs font-rajdhani font-semibold text-cyber-yellow hover:underline uppercase"
                                 onclick={submitColor}
                             >Apply</button>
                         </div>
                     {/if}
 
                     <button
-                        class="w-full text-left px-3 py-2 text-xs font-mono text-[#e0e0e0] hover:bg-[rgba(0,255,255,0.08)] hover:text-neon-cyan transition-colors"
+                        class="w-full text-left px-3 py-2 text-xs font-rajdhani font-semibold uppercase tracking-wider text-[#D4D4D4] hover:bg-[rgba(252,238,10,0.06)] hover:text-cyber-yellow transition-colors"
                         onclick={() => { editingWip = !editingWip; editingColor = false; }}
                     >
                         WIP Limit {column.wipLimit !== null ? `(${column.wipLimit})` : ''}
@@ -312,18 +320,24 @@
                                 bind:value={wipValue}
                                 min="1"
                                 placeholder="No limit"
-                                class="w-16 bg-[#0a0a0f] border border-[rgba(0,255,255,0.2)] rounded px-2 py-1 text-xs font-mono text-white focus:outline-none focus:border-neon-cyan"
+                                class="w-16 bg-cyber-dark border px-2 py-1 text-xs font-mono text-white focus:outline-none"
+                                style="border-color: rgba(252,238,10,0.15);"
+                                onfocus={(e) => e.currentTarget.style.borderColor = 'var(--cyber-yellow)'}
+                                onblur={(e) => e.currentTarget.style.borderColor = 'rgba(252,238,10,0.15)'}
                             />
                             <button
-                                class="text-xs font-mono text-neon-cyan hover:underline"
+                                class="text-xs font-rajdhani font-semibold text-cyber-yellow hover:underline uppercase"
                                 onclick={submitWipLimit}
                             >Apply</button>
                         </div>
                     {/if}
 
-                    <div class="border-t border-[rgba(255,0,64,0.2)] mt-1"></div>
+                    <div class="mt-1" style="border-top: 1px solid rgba(197,0,60,0.25);"></div>
                     <button
-                        class="w-full text-left px-3 py-2 text-xs font-mono text-neon-red hover:bg-[rgba(255,0,64,0.08)] transition-colors"
+                        class="w-full text-left px-3 py-2 text-xs font-rajdhani font-semibold uppercase tracking-wider transition-colors"
+                        style="color: var(--cyber-red-bright);"
+                        onmouseenter={(e) => e.currentTarget.style.background = 'rgba(197,0,60,0.08)'}
+                        onmouseleave={(e) => e.currentTarget.style.background = 'transparent'}
                         onclick={() => { showConfirmDelete = true; menuOpen = false; }}
                     >
                         Delete Column
@@ -339,7 +353,7 @@
         use:dndzone={{
             items,
             type: 'card',
-            dropTargetStyle: { outline: '1px dashed rgba(0,255,255,0.3)', outlineOffset: '-2px' }
+            dropTargetStyle: { outline: '1px dashed rgba(252,238,10,0.25)', outlineOffset: '-2px' }
         }}
         onconsider={handleDndConsider}
         onfinalize={handleDndFinalize}
@@ -355,7 +369,7 @@
     </div>
 
     <!-- Quick add footer -->
-    <div class="flex-shrink-0 border-t border-[rgba(0,255,255,0.05)]">
+    <div class="flex-shrink-0" style="border-top: 1px solid rgba(252,238,10,0.05);">
         <CardQuickAdd columnId={column.id} />
     </div>
 </div>
@@ -370,7 +384,7 @@
     /* DnD drag ghost styling */
     :global([data-is-dnd-shadow-item]) .card-wrapper {
         opacity: 0.4;
-        border: 1px dashed rgba(0, 255, 255, 0.4) !important;
-        box-shadow: 0 0 10px rgba(0, 255, 255, 0.2) !important;
+        border: 1px dashed rgba(252, 238, 10, 0.4) !important;
+        box-shadow: 0 0 10px rgba(252, 238, 10, 0.15) !important;
     }
 </style>

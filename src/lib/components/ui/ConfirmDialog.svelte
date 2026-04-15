@@ -21,20 +21,26 @@
 <Modal maxWidth="max-w-sm" onclose={cancel}>
     <div class="px-6 py-6 flex flex-col gap-6">
         <div class="flex items-start gap-4">
-            <span class="text-neon-red text-2xl flex-shrink-0 mt-0.5">⚠</span>
-            <p class="text-[#e0e0e0] font-mono text-sm leading-relaxed">{message}</p>
+            <span class="text-2xl flex-shrink-0 mt-0.5" style="color: var(--cyber-red-bright);">⚠</span>
+            <p class="font-rajdhani text-sm leading-relaxed" style="color: var(--text-primary);">{message}</p>
         </div>
 
         <div class="flex gap-3 justify-end">
             <button
-                class="px-4 py-2 text-xs font-mono uppercase tracking-wider border border-[rgba(0,255,255,0.3)] text-[#808090] hover:text-neon-cyan hover:border-neon-cyan rounded transition-all"
+                class="px-4 py-2 text-xs font-rajdhani font-bold uppercase tracking-wider transition-all"
+                style="border: 1px solid rgba(252,238,10,0.2); color: var(--text-muted);"
+                onmouseenter={(e) => { e.currentTarget.style.color = 'var(--cyber-yellow)'; e.currentTarget.style.borderColor = 'var(--cyber-yellow)'; }}
+                onmouseleave={(e) => { e.currentTarget.style.color = 'var(--text-muted)'; e.currentTarget.style.borderColor = 'rgba(252,238,10,0.2)'; }}
                 onclick={cancel}
                 disabled={loading}
             >
                 Cancel
             </button>
             <button
-                class="px-4 py-2 text-xs font-mono uppercase tracking-wider border border-neon-red text-neon-red hover:bg-neon-red hover:text-[#0a0a0f] rounded transition-all disabled:opacity-50"
+                class="px-4 py-2 text-xs font-rajdhani font-bold uppercase tracking-wider transition-all clip-cyber-sm disabled:opacity-50"
+                style="border: 1px solid var(--cyber-red-bright); color: var(--cyber-red-bright);"
+                onmouseenter={(e) => { e.currentTarget.style.background = 'var(--cyber-red-bright)'; e.currentTarget.style.color = '#0D0D12'; }}
+                onmouseleave={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'var(--cyber-red-bright)'; }}
                 onclick={confirm}
                 disabled={loading}
             >

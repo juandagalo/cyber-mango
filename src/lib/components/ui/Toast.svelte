@@ -3,9 +3,9 @@
     import { fly } from 'svelte/transition';
 
     const typeStyles = {
-        error: { border: 'border-neon-red', text: 'text-neon-red', icon: '✗' },
-        success: { border: 'border-neon-green', text: 'text-neon-green', icon: '✓' },
-        info: { border: 'border-neon-cyan', text: 'text-neon-cyan', icon: 'ℹ' }
+        error: { border: 'var(--cyber-red-bright)', icon: '✗' },
+        success: { border: '#39FF14', icon: '✓' },
+        info: { border: 'var(--cyber-yellow)', icon: '!' }
     };
 </script>
 
@@ -13,15 +13,18 @@
     {#each $toasts as toast (toast.id)}
         {@const style = typeStyles[toast.type]}
         <div
-            class="pointer-events-auto min-w-[280px] max-w-sm bg-[#12121a] border {style.border} rounded px-4 py-3 flex items-start gap-3 shadow-lg"
-            style="box-shadow: 0 0 12px rgba(0,255,255,0.15);"
+            class="pointer-events-auto min-w-[280px] max-w-sm flex items-start gap-3 px-4 py-3 clip-cyber-sm"
+            style="background: var(--bg-surface); border: 1px solid {style.border}; box-shadow: 0 0 15px rgba(0,0,0,0.5), 0 0 8px {style.border}20;"
             in:fly={{ x: 50, duration: 200 }}
             out:fly={{ x: 50, duration: 150 }}
         >
-            <span class="{style.text} text-lg font-bold flex-shrink-0">{style.icon}</span>
-            <p class="text-[#e0e0e0] text-sm font-mono flex-1">{toast.message}</p>
+            <span class="text-lg font-bold flex-shrink-0" style="color: {style.border};">{style.icon}</span>
+            <p class="text-sm font-rajdhani flex-1" style="color: var(--text-primary);">{toast.message}</p>
             <button
-                class="text-[#808090] hover:text-white flex-shrink-0 ml-2"
+                class="flex-shrink-0 ml-2 transition-colors"
+                style="color: var(--text-muted);"
+                onmouseenter={(e) => e.currentTarget.style.color = 'white'}
+                onmouseleave={(e) => e.currentTarget.style.color = 'var(--text-muted)'}
                 onclick={() => removeToast(toast.id)}
             >
                 ×

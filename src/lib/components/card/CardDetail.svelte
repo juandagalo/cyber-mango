@@ -43,10 +43,10 @@
 
     const priorities: Priority[] = ['critical', 'high', 'medium', 'low'];
     const priorityColors: Record<Priority, string> = {
-        critical: '#FF0040',
-        high: '#FF00FF',
-        medium: '#00FFFF',
-        low: '#404060'
+        critical: '#FF003C',
+        high: '#ED1E79',
+        medium: '#FCEE0A',
+        low: '#6A6A7A'
     };
 
     function formatDate(dateStr: string): string {
@@ -198,23 +198,28 @@
 
                 <!-- Title -->
                 <div class="flex flex-col gap-1.5">
-                    <label for="card-title" class="text-[10px] font-mono uppercase tracking-wider text-[#808090]">Title</label>
+                    <label for="card-title" class="text-[10px] font-rajdhani font-semibold uppercase tracking-[0.12em]" style="color: var(--text-muted);">// Title</label>
                     <input
                         id="card-title"
                         bind:value={title}
                         type="text"
-                        class="bg-transparent border border-[rgba(0,255,255,0.15)] rounded px-3 py-2 text-sm font-mono text-white focus:outline-none focus:border-neon-cyan transition-colors"
+                        class="bg-transparent px-3 py-2 text-sm font-rajdhani font-semibold text-white focus:outline-none transition-colors"
+                        style="border: 1px solid rgba(252,238,10,0.12);"
+                        onfocus={(e) => e.currentTarget.style.borderColor = 'var(--cyber-yellow)'}
+                        onblur={(e) => { e.currentTarget.style.borderColor = 'rgba(252,238,10,0.12)'; saveTitle(); }}
                         oninput={onTitleInput}
-                        onblur={saveTitle}
                     />
                 </div>
 
                 <!-- Description -->
                 <div class="flex flex-col gap-1.5 flex-1 min-h-0">
                     <div class="flex items-center justify-between">
-                        <label for="card-desc" class="text-[10px] font-mono uppercase tracking-wider text-[#808090]">Description</label>
+                        <label for="card-desc" class="text-[10px] font-rajdhani font-semibold uppercase tracking-[0.12em]" style="color: var(--text-muted);">// Description</label>
                         <button
-                            class="text-[10px] font-mono uppercase tracking-wider px-2 py-0.5 rounded transition-colors {editingDescription ? 'text-neon-cyan border border-neon-cyan/30 bg-neon-cyan/5' : 'text-[#808090] hover:text-neon-cyan border border-transparent'}"
+                            class="text-[10px] font-rajdhani font-bold uppercase tracking-wider px-2 py-0.5 transition-colors"
+                            style="color: {editingDescription ? 'var(--cyber-cyan)' : 'var(--text-muted)'}; border: 1px solid {editingDescription ? 'rgba(2,215,242,0.3)' : 'transparent'}; background: {editingDescription ? 'rgba(2,215,242,0.05)' : 'transparent'};"
+                            onmouseenter={(e) => { if (!editingDescription) e.currentTarget.style.color = 'var(--cyber-yellow)'; }}
+                            onmouseleave={(e) => { if (!editingDescription) e.currentTarget.style.color = 'var(--text-muted)'; }}
                             onclick={() => { editingDescription = !editingDescription; }}
                         >
                             {editingDescription ? 'Preview' : 'Edit'}
@@ -227,14 +232,17 @@
                             bind:value={description}
                             rows="12"
                             placeholder="Add a description... (supports markdown)"
-                            class="bg-transparent border border-[rgba(0,255,255,0.15)] rounded px-3 py-2 text-sm font-mono text-[#e0e0e0] placeholder:text-[#404060] focus:outline-none focus:border-neon-cyan transition-colors resize-none flex-1 min-h-0"
+                            class="bg-transparent px-3 py-2 text-sm font-mono resize-none flex-1 min-h-0 focus:outline-none transition-colors"
+                            style="border: 1px solid rgba(252,238,10,0.12); color: var(--text-primary);"
+                            onfocus={(e) => e.currentTarget.style.borderColor = 'var(--cyber-yellow)'}
+                            onblur={(e) => { e.currentTarget.style.borderColor = 'rgba(252,238,10,0.12)'; saveDescription(); }}
                             oninput={onDescInput}
-                            onblur={saveDescription}
                         ></textarea>
                     {:else}
                         <!-- svelte-ignore a11y_click_events_have_key_events a11y_no_static_element_interactions -->
                         <div
-                            class="markdown-body border border-[rgba(0,255,255,0.15)] rounded px-4 py-3 text-sm text-[#e0e0e0] flex-1 min-h-0 overflow-y-auto cursor-text"
+                            class="markdown-body px-4 py-3 text-sm flex-1 min-h-0 overflow-y-auto cursor-text"
+                            style="border: 1px solid rgba(252,238,10,0.08); color: var(--text-primary);"
                             ondblclick={() => { editingDescription = true; }}
                             role="button"
                             tabindex="0"
@@ -243,7 +251,7 @@
                             {#if description}
                                 {@html renderedDescription}
                             {:else}
-                                <p class="text-[#404060] italic">Double-click to add a description...</p>
+                                <p class="italic" style="color: var(--text-muted);">Double-click to add a description...</p>
                             {/if}
                         </div>
                     {/if}
@@ -251,21 +259,23 @@
             </div>
 
             <!-- Right column: Priority, Tags, Timestamps, Delete -->
-            <div class="flex flex-col gap-5 md:border-l md:border-[rgba(0,255,255,0.08)] md:pl-6 overflow-y-auto min-h-0">
+            <div class="flex flex-col gap-5 md:pl-6 overflow-y-auto min-h-0" style="border-left: 1px solid rgba(252,238,10,0.06);">
 
                 <!-- Priority -->
                 <div class="flex flex-col gap-2">
-                    <span class="text-[10px] font-mono uppercase tracking-wider text-[#808090]">Priority</span>
+                    <span class="text-[10px] font-rajdhani font-semibold uppercase tracking-[0.12em]" style="color: var(--text-muted);">// Priority</span>
                     <div class="flex gap-2 flex-wrap">
                         {#each priorities as p}
                             <button
-                                class="px-3 py-1.5 rounded text-[10px] font-mono font-bold uppercase tracking-wider transition-all"
+                                class="px-3 py-1.5 text-[10px] font-rajdhani font-bold uppercase tracking-wider transition-all"
                                 style="
                                     color: {priorityColors[p]};
                                     border: 1px solid {priorityColors[p]};
-                                    background: {priority === p ? priorityColors[p] + '25' : 'transparent'};
-                                    {priority === p ? `box-shadow: 0 0 8px ${priorityColors[p]}40;` : ''}
+                                    background: {priority === p ? priorityColors[p] + '20' : 'transparent'};
+                                    {priority === p ? `box-shadow: 0 0 8px ${priorityColors[p]}30;` : ''}
                                 "
+                                onmouseenter={(e) => { if (priority !== p) { e.currentTarget.style.background = priorityColors[p] + '30'; e.currentTarget.style.boxShadow = `0 0 16px ${priorityColors[p]}50, inset 0 0 8px ${priorityColors[p]}15`; } }}
+                                onmouseleave={(e) => { if (priority !== p) { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.boxShadow = 'none'; } }}
                                 onclick={() => changePriority(p)}
                                 disabled={savingPriority}
                             >
@@ -277,14 +287,17 @@
 
                 <!-- Tags -->
                 <div class="flex flex-col gap-2">
-                    <span class="text-[10px] font-mono uppercase tracking-wider text-[#808090]">Tags</span>
+                    <span class="text-[10px] font-rajdhani font-semibold uppercase tracking-[0.12em]" style="color: var(--text-muted);">// Tags</span>
                     <div class="flex flex-wrap gap-1.5 items-center">
                         {#each tags as tag (tag.id)}
                             <TagBadge {tag} />
                         {/each}
                         <div class="relative">
                             <button
-                                class="px-2 py-0.5 text-[10px] font-mono border border-[rgba(0,255,255,0.2)] text-[#808090] hover:text-neon-cyan hover:border-neon-cyan rounded transition-all"
+                                class="px-2 py-0.5 text-[10px] font-rajdhani font-semibold uppercase transition-all"
+                                style="border: 1px solid rgba(252,238,10,0.15); color: var(--text-muted);"
+                                onmouseenter={(e) => { e.currentTarget.style.color = 'var(--cyber-yellow)'; e.currentTarget.style.borderColor = 'var(--cyber-yellow)'; }}
+                                onmouseleave={(e) => { e.currentTarget.style.color = 'var(--text-muted)'; e.currentTarget.style.borderColor = 'rgba(252,238,10,0.15)'; }}
                                 onclick={(e: MouseEvent) => { e.stopPropagation(); showTagPicker = !showTagPicker; }}
                             >
                                 + Tag
@@ -293,8 +306,8 @@
                             {#if showTagPicker}
                                 <!-- svelte-ignore a11y_click_events_have_key_events -->
                                 <div
-                                    class="absolute right-0 top-full mt-1 z-30 rounded overflow-hidden"
-                                    style="background: #12121a; border: 1px solid rgba(0,255,255,0.2); box-shadow: 0 8px 24px rgba(0,0,0,0.6); min-width: 220px;"
+                                    class="absolute right-0 top-full mt-1 z-30 overflow-hidden clip-cyber-sm"
+                                    style="background: var(--bg-surface); border: 1px solid rgba(252,238,10,0.2); box-shadow: 0 8px 24px rgba(0,0,0,0.7); min-width: 220px;"
                                     onclick={(e: MouseEvent) => e.stopPropagation()}
                                     role="presentation"
                                 >
@@ -319,21 +332,24 @@
                 </div>
 
                 <!-- Timestamps -->
-                <div class="flex flex-col gap-2 text-[10px] font-mono text-[#808090] border-t border-[rgba(0,255,255,0.08)] pt-3">
+                <div class="flex flex-col gap-2 text-[10px] font-mono pt-3" style="border-top: 1px solid rgba(252,238,10,0.06); color: var(--text-muted);">
                     <div>
                         <span class="uppercase tracking-wider">Created</span>
-                        <span class="text-[#606070] ml-2">{formatDate(card.createdAt)}</span>
+                        <span class="ml-2" style="color: var(--cyber-cyan);">{formatDate(card.createdAt)}</span>
                     </div>
                     <div>
                         <span class="uppercase tracking-wider">Updated</span>
-                        <span class="text-[#606070] ml-2">{formatDate(card.updatedAt)}</span>
+                        <span class="ml-2" style="color: var(--cyber-cyan);">{formatDate(card.updatedAt)}</span>
                     </div>
                 </div>
 
                 <!-- Delete -->
-                <div class="border-t border-[rgba(255,0,64,0.15)] pt-3 mt-auto">
+                <div class="pt-3 mt-auto" style="border-top: 1px solid rgba(197,0,60,0.15);">
                     <button
-                        class="w-full px-4 py-2 text-xs font-mono uppercase tracking-wider border border-neon-red text-neon-red hover:bg-neon-red hover:text-[#0a0a0f] rounded transition-all"
+                        class="w-full px-4 py-2 text-xs font-rajdhani font-bold uppercase tracking-wider transition-all clip-cyber-sm"
+                        style="border: 1px solid var(--cyber-red-bright); color: var(--cyber-red-bright);"
+                        onmouseenter={(e) => { e.currentTarget.style.background = 'var(--cyber-red-bright)'; e.currentTarget.style.color = '#0D0D12'; }}
+                        onmouseleave={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'var(--cyber-red-bright)'; }}
                         onclick={() => (showConfirmDelete = true)}
                     >
                         Delete Card

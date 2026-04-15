@@ -1,5 +1,11 @@
 <script>
   import '../app.css';
+  import '$lib/styles/tokens.css';
+  import '$lib/styles/base.css';
+  import '$lib/styles/utilities.css';
+  import '$lib/styles/animations.css';
+  import '$lib/styles/modal.css';
+  import '$lib/styles/markdown.css';
   import { onMount } from 'svelte';
 
   let { children } = $props();

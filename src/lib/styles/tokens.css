@@ -1,0 +1,39 @@
+/* ═══════════════════════════════════════════
+   DESIGN TOKENS — Cyberpunk 2077 palette
+   ═══════════════════════════════════════════ */
+
+:root {
+  /* Primary colors */
+  --cyber-yellow: #FCEE0A;
+  --cyber-red: #c5003c;
+  --cyber-red-bright: #FF003C;
+  --cyber-cyan: #02D7F2;
+  --cyber-cyan-dim: #55EAD4;
+  --cyber-magenta: #ED1E79;
+  --cyber-purple: #7700A6;
+
+  /* Backgrounds */
+  --bg-deepest: #0D0D12;
+  --bg-surface: #13131D;
+  --bg-card: #1A1A28;
+  --bg-elevated: #1E1E30;
+
+  /* Text */
+  --text-primary: #D4D4D4;
+  --text-heading: #ffffff;
+  --text-muted: #6A6A7A;
+  --text-cyber: var(--cyber-yellow);
+
+  /* Borders */
+  --border-subtle: rgba(252, 238, 10, 0.08);
+  --border-accent: rgba(252, 238, 10, 0.25);
+  --border-red: rgba(197, 0, 60, 0.3);
+
+  /* Legacy aliases */
+  --neon-cyan: var(--cyber-cyan);
+  --neon-magenta: var(--cyber-magenta);
+  --neon-purple: var(--cyber-purple);
+  --neon-green: #39FF14;
+  --neon-yellow: var(--cyber-yellow);
+  --neon-red: var(--cyber-red-bright);
+}

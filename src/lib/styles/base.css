@@ -1,0 +1,56 @@
+/* ═══════════════════════════════════════════
+   BASE — resets, body, scrollbar
+   ═══════════════════════════════════════════ */
+
+html, body {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  height: 100%;
+}
+
+body {
+  background-color: var(--bg-deepest);
+  color: var(--text-primary);
+  font-family: 'Rajdhani', sans-serif;
+}
+
+/* Scrollbar — Webkit */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-deepest);
+  border-left: 1px solid rgba(252, 238, 10, 0.06);
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, rgba(252, 238, 10, 0.2) 0%, rgba(197, 0, 60, 0.15) 100%);
+  border: 1px solid rgba(252, 238, 10, 0.1);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, rgba(252, 238, 10, 0.4) 0%, rgba(197, 0, 60, 0.3) 100%);
+  box-shadow: 0 0 6px rgba(252, 238, 10, 0.3);
+}
+
+::-webkit-scrollbar-corner {
+  background: var(--bg-deepest);
+}
+
+::-webkit-scrollbar:horizontal {
+  height: 4px;
+}
+
+::-webkit-scrollbar-track:horizontal {
+  border-left: none;
+  border-top: 1px solid rgba(252, 238, 10, 0.06);
+}
+
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(252, 238, 10, 0.2) var(--bg-deepest);
+}

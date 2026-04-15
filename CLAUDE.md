@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-Web UI for **Cyber Mango**, a cyberpunk-themed kanban board managed by AI agents. Built with SvelteKit 4 + Tailwind CSS 3 + SQLite (Drizzle ORM). The companion Claude Code plugin provides MCP tools for programmatic board management.
+Web UI for **Cyber Mango**, a cyberpunk-themed kanban board managed by AI agents. Built with SvelteKit 2 + Svelte 5 + Tailwind CSS 3 + SQLite (Drizzle ORM). The companion Claude Code plugin provides MCP tools for programmatic board management.
 
 ## Quick Start
 
@@ -67,12 +67,17 @@ npm run db:migrate     # Run migrations
 
 ## Code Conventions
 
-- **Svelte 4** (NOT Svelte 5) — use `export let`, `$:` reactive, writable stores. No runes.
+- **Svelte 5 runes** — use `$props()`, `$state()`, `$derived()`, `$effect()`. No legacy `export let` or `$:`.
+- **Event handling** — callback props (`onclose`, `onrefresh`), NOT `createEventDispatcher`. Use `onclick` not `on:click`.
+- **Slots** — `{@render children()}` with `Snippet` types, NOT `<slot />`.
+- **Stores** — writable stores (`svelte/store`) still used for global state (board, toast). Compatible with Svelte 5.
+- **Initial prop capture** — use `untrack()` when initializing `$state()` from props to avoid `state_referenced_locally` warnings.
 - **Tailwind 3** (NOT v4) — standard `@tailwind base/components/utilities`
 - **TypeScript strict mode**
 - **Services are synchronous** — better-sqlite3 is sync, no async/await in service methods
 - **ESM only** — `"type": "module"` in package.json
-- **Drizzle 0.40+** — array syntax for table extras: `(t) => [index(...)]`
+- **Node.js >= 20** — required by better-sqlite3 v12+
+- **Drizzle 0.45+** — array syntax for table extras: `(t) => [index(...)]`
 
 ## Cyberpunk Design System
 

@@ -1,9 +1,9 @@
 import { eq, asc, count, sql } from 'drizzle-orm';
 import { nanoid } from 'nanoid';
 import type { DrizzleDb } from '../db/connection.js';
-import { boards, columns, cards, tags, cardTags } from '../db/schema.js';
+import { boards, columns, cards, tags, cardTags, phases } from '../db/schema.js';
 import { NotFoundError, ValidationError } from '../errors.js';
-import type { Board, BoardWithColumns, BoardSummary, ColumnWithCards, CardWithTags, Priority } from '../../types/board.js';
+import type { Board, BoardWithColumns, BoardSummary, ColumnWithCards, CardWithTags, Phase, Priority } from '../../types/board.js';
 
 export class BoardService {
     constructor(private readonly db: DrizzleDb) {}
@@ -27,10 +27,24 @@ export class BoardService {
 
         const columnIds = boardColumns.map((c) => c.id);
 
+        // Load board phases
+        const boardPhases = this.db
+            .select()
+            .from(phases)
+            .where(eq(phases.boardId, boardId))
+            .orderBy(asc(phases.position))
+            .all() as Phase[];
+
+        const phaseMap = new Map<string, Phase>();
+        for (const p of boardPhases) {
+            phaseMap.set(p.id, p);
+        }
+
         if (columnIds.length === 0) {
             return {
                 ...(board as Board),
-                columns: []
+                columns: [],
+                phases: boardPhases
             };
         }
 
@@ -91,7 +105,8 @@ export class BoardService {
                 position: card.position,
                 createdAt: card.createdAt,
                 updatedAt: card.updatedAt,
-                tags: tagsByCard.get(card.id) ?? []
+                tags: tagsByCard.get(card.id) ?? [],
+                phase: card.phaseId ? phaseMap.get(card.phaseId) ?? null : null
             });
         }
 
@@ -109,7 +124,8 @@ export class BoardService {
 
         return {
             ...(board as Board),
-            columns: columnsWithCards
+            columns: columnsWithCards,
+            phases: boardPhases
         };
     }
 
@@ -156,6 +172,7 @@ export class BoardService {
                 totalCards: 0,
                 cardsByColumn: [],
                 cardsByPriority: [],
+                cardsByPhase: [],
                 totalTags: 0
             };
         }
@@ -196,6 +213,33 @@ export class BoardService {
             count: row.count
         }));
 
+        // Count cards per phase
+        const phaseResults = this.db
+            .select({
+                phaseId: cards.phaseId,
+                count: count()
+            })
+            .from(cards)
+            .where(sql`${cards.columnId} IN (${sql.join(columnIds.map((id) => sql`${id}`), sql`, `)})`)
+            .groupBy(cards.phaseId)
+            .all();
+
+        const boardPhases = this.db
+            .select()
+            .from(phases)
+            .where(eq(phases.boardId, boardId))
+            .all();
+        const phaseNameMap = new Map<string, string>();
+        for (const p of boardPhases) {
+            phaseNameMap.set(p.id, p.name);
+        }
+
+        const cardsByPhase: BoardSummary['cardsByPhase'] = phaseResults.map((row) => ({
+            phaseId: row.phaseId,
+            phaseName: row.phaseId ? phaseNameMap.get(row.phaseId) ?? null : null,
+            count: row.count
+        }));
+
         // Count tags for board
         const tagsResult = this.db
             .select({ count: count() })
@@ -210,6 +254,7 @@ export class BoardService {
             totalCards,
             cardsByColumn,
             cardsByPriority,
+            cardsByPhase,
             totalTags
         };
     }
@@ -246,6 +291,26 @@ export class BoardService {
                 name: col.name,
                 position: col.position,
                 color: col.color,
+                createdAt: now,
+                updatedAt: now
+            }).run();
+        }
+
+        const defaultPhases = [
+            { name: 'Development',     color: '#00FFFF', position: 1.0 },
+            { name: 'Code Review',     color: '#BF00FF', position: 2.0 },
+            { name: 'QA',              color: '#FCEE0A', position: 3.0 },
+            { name: 'Client Review',   color: '#FF00FF', position: 4.0 },
+            { name: 'Ready to Deploy', color: '#39FF14', position: 5.0 },
+        ];
+
+        for (const p of defaultPhases) {
+            this.db.insert(phases).values({
+                id: nanoid(12),
+                boardId,
+                name: p.name,
+                color: p.color,
+                position: p.position,
                 createdAt: now,
                 updatedAt: now
             }).run();

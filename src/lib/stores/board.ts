@@ -1,5 +1,5 @@
 import { writable } from 'svelte/store';
-import type { BoardWithColumns, CardWithTags } from '$lib/types/board.js';
+import type { BoardWithColumns, CardWithTags, Phase } from '$lib/types/board.js';
 
 export const boardStore = writable<BoardWithColumns | null>(null);
 
@@ -35,6 +35,45 @@ export function addCardToStore(columnId: string, card: CardWithTags) {
             col.cards.push(card);
             col.cards.sort((a, b) => a.position - b.position);
         }
+        return { ...board };
+    });
+}
+
+export function addPhaseToStore(phase: Phase) {
+    boardStore.update(board => {
+        if (!board) return board;
+        board.phases = [...board.phases, phase].sort((a, b) => a.position - b.position);
+        return { ...board };
+    });
+}
+
+export function updatePhaseInStore(phaseId: string, updates: Partial<Phase>) {
+    boardStore.update(board => {
+        if (!board) return board;
+        board.phases = board.phases.map(p => p.id === phaseId ? { ...p, ...updates } : p);
+        return { ...board };
+    });
+}
+
+export function removePhaseFromStore(phaseId: string) {
+    boardStore.update(board => {
+        if (!board) return board;
+        board.phases = board.phases.filter(p => p.id !== phaseId);
+        for (const col of board.columns) {
+            for (const card of col.cards) {
+                if (card.phase?.id === phaseId) {
+                    card.phase = null;
+                }
+            }
+        }
+        return { ...board };
+    });
+}
+
+export function setPhasesInStore(phases: Phase[]) {
+    boardStore.update(board => {
+        if (!board) return board;
+        board.phases = phases;
         return { ...board };
     });
 }

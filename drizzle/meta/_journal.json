@@ -8,6 +8,13 @@
       "when": 1776186662950,
       "tag": "0000_wandering_sister_grimm",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1776299103511,
+      "tag": "0001_right_polaris",
+      "breakpoints": true
     }
   ]
 }

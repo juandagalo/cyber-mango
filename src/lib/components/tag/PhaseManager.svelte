@@ -1,0 +1,301 @@
+<script lang="ts">
+    import type { Phase } from '$lib/types/board.js';
+    import Modal from '$lib/components/ui/Modal.svelte';
+    import ConfirmDialog from '$lib/components/ui/ConfirmDialog.svelte';
+    import { addToast } from '$lib/stores/toast.js';
+    import { addPhaseToStore, updatePhaseInStore, removePhaseFromStore, setPhasesInStore } from '$lib/stores/board.js';
+
+    let { boardId, onclose }: {
+        boardId: string;
+        onclose?: () => void;
+    } = $props();
+
+    let phases = $state<Phase[]>([]);
+    let loading = $state(true);
+    let phaseToDelete = $state<Phase | null>(null);
+    let deletingPhase = $state(false);
+
+    let editingId = $state<string | null>(null);
+    let editName = $state('');
+    let editColor = $state('');
+
+    let creatingNew = $state(false);
+    let newName = $state('');
+    let newColor = $state('#00FFFF');
+    let savingNew = $state(false);
+
+    async function loadPhases() {
+        loading = true;
+        try {
+            const res = await fetch(`/api/boards/${boardId}/phases`);
+            if (res.ok) {
+                const data = await res.json();
+                phases = data.phases ?? [];
+            }
+        } catch {
+            addToast('Failed to load phases');
+        } finally {
+            loading = false;
+        }
+    }
+
+    function startEdit(phase: Phase) {
+        editingId = phase.id;
+        editName = phase.name;
+        editColor = phase.color;
+    }
+
+    function cancelEdit() {
+        editingId = null;
+    }
+
+    async function saveEdit(phaseId: string) {
+        const name = editName.trim();
+        if (!name) return;
+
+        try {
+            const res = await fetch(`/api/phases/${phaseId}`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, color: editColor })
+            });
+            if (res.ok) {
+                phases = phases.map(p => p.id === phaseId ? { ...p, name, color: editColor } : p);
+                updatePhaseInStore(phaseId, { name, color: editColor });
+                editingId = null;
+            } else {
+                addToast('Failed to update phase');
+            }
+        } catch {
+            addToast('Failed to update phase');
+        }
+    }
+
+    async function deletePhase() {
+        if (!phaseToDelete || deletingPhase) return;
+        deletingPhase = true;
+        try {
+            const res = await fetch(`/api/phases/${phaseToDelete.id}`, { method: 'DELETE' });
+            if (res.ok) {
+                removePhaseFromStore(phaseToDelete.id);
+                phases = phases.filter(p => p.id !== phaseToDelete!.id);
+                phaseToDelete = null;
+            } else {
+                addToast('Failed to delete phase');
+            }
+        } catch {
+            addToast('Failed to delete phase');
+        } finally {
+            deletingPhase = false;
+        }
+    }
+
+    async function createPhase() {
+        const name = newName.trim();
+        if (!name || savingNew) return;
+        savingNew = true;
+        try {
+            const res = await fetch(`/api/boards/${boardId}/phases`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, color: newColor })
+            });
+            if (res.ok) {
+                const data = await res.json();
+                phases = [...phases, data.phase];
+                addPhaseToStore(data.phase);
+                newName = '';
+                creatingNew = false;
+            } else {
+                addToast('Failed to create phase');
+            }
+        } catch {
+            addToast('Failed to create phase');
+        } finally {
+            savingNew = false;
+        }
+    }
+
+    async function movePhase(index: number, direction: -1 | 1) {
+        const targetIndex = index + direction;
+        if (targetIndex < 0 || targetIndex >= phases.length) return;
+
+        const reordered = [...phases];
+        [reordered[index], reordered[targetIndex]] = [reordered[targetIndex], reordered[index]];
+        const orderedIds = reordered.map(p => p.id);
+
+        phases = reordered;
+
+        try {
+            const res = await fetch(`/api/boards/${boardId}/phases/reorder`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ orderedIds })
+            });
+            if (res.ok) {
+                const data = await res.json();
+                phases = data.phases;
+                setPhasesInStore(data.phases);
+            } else {
+                addToast('Failed to reorder phases');
+                await loadPhases();
+            }
+        } catch {
+            addToast('Failed to reorder phases');
+            await loadPhases();
+        }
+    }
+
+    loadPhases();
+</script>
+
+{#if phaseToDelete}
+    <ConfirmDialog
+        message="Delete phase '{phaseToDelete.name}'? Cards assigned to it will be unassigned."
+        loading={deletingPhase}
+        onconfirm={deletePhase}
+        oncancel={() => (phaseToDelete = null)}
+    />
+{/if}
+
+<Modal title="MANAGE PHASES" maxWidth="max-w-lg" onclose={() => onclose?.()}>
+    <div class="px-6 py-4 flex flex-col gap-4">
+
+        {#if loading}
+            <p class="text-xs font-rajdhani text-center py-8" style="color: var(--text-muted);">Loading phases...</p>
+        {:else if phases.length === 0}
+            <p class="text-xs font-rajdhani text-center py-8" style="color: var(--text-muted);">No phases yet. Create one below.</p>
+        {:else}
+            <div class="flex flex-col gap-1">
+                {#each phases as phase, i (phase.id)}
+                    <div
+                        class="flex items-center gap-3 px-3 py-2"
+                        style="background: var(--bg-card);"
+                    >
+                        {#if editingId === phase.id}
+                            <input
+                                type="color"
+                                bind:value={editColor}
+                                class="w-8 h-6 cursor-pointer flex-shrink-0"
+                            />
+                            <input
+                                bind:value={editName}
+                                type="text"
+                                class="flex-1 bg-transparent text-white text-xs font-rajdhani font-semibold focus:outline-none"
+                                style="border-bottom: 1px solid var(--cyber-yellow);"
+                                onkeydown={(e) => {
+                                    if (e.key === 'Enter') saveEdit(phase.id);
+                                    if (e.key === 'Escape') cancelEdit();
+                                }}
+                            />
+                            <button
+                                class="text-xs font-rajdhani font-bold flex-shrink-0 uppercase"
+                                style="color: var(--cyber-yellow);"
+                                onclick={() => saveEdit(phase.id)}
+                            >Save</button>
+                            <button
+                                class="text-xs flex-shrink-0 transition-colors"
+                                style="color: var(--text-muted);"
+                                onmouseenter={(e) => e.currentTarget.style.color = 'var(--cyber-yellow)'}
+                                onmouseleave={(e) => e.currentTarget.style.color = 'var(--text-muted)'}
+                                onclick={cancelEdit}
+                            >x</button>
+                        {:else}
+                            <span class="w-3 h-3 flex-shrink-0" style="background: {phase.color}; box-shadow: 0 0 4px {phase.color};"></span>
+                            <span class="flex-1 text-xs font-rajdhani font-semibold truncate" style="color: var(--text-primary);">{phase.name}</span>
+
+                            <!-- Reorder buttons -->
+                            {#if i > 0}
+                                <button
+                                    class="text-[10px] flex-shrink-0 px-0.5 transition-colors"
+                                    style="color: var(--text-muted);"
+                                    title="Move up"
+                                    onmouseenter={(e) => e.currentTarget.style.color = 'var(--cyber-cyan)'}
+                                    onmouseleave={(e) => e.currentTarget.style.color = 'var(--text-muted)'}
+                                    onclick={() => movePhase(i, -1)}
+                                >&#9650;</button>
+                            {/if}
+                            {#if i < phases.length - 1}
+                                <button
+                                    class="text-[10px] flex-shrink-0 px-0.5 transition-colors"
+                                    style="color: var(--text-muted);"
+                                    title="Move down"
+                                    onmouseenter={(e) => e.currentTarget.style.color = 'var(--cyber-cyan)'}
+                                    onmouseleave={(e) => e.currentTarget.style.color = 'var(--text-muted)'}
+                                    onclick={() => movePhase(i, 1)}
+                                >&#9660;</button>
+                            {/if}
+
+                            <button
+                                class="text-[10px] font-rajdhani font-bold uppercase flex-shrink-0 px-1 transition-colors"
+                                style="color: var(--text-muted);"
+                                onmouseenter={(e) => e.currentTarget.style.color = 'var(--cyber-yellow)'}
+                                onmouseleave={(e) => e.currentTarget.style.color = 'var(--text-muted)'}
+                                onclick={() => startEdit(phase)}
+                            >Edit</button>
+                            <button
+                                class="text-[10px] flex-shrink-0 px-1 transition-colors"
+                                style="color: var(--text-muted);"
+                                onmouseenter={(e) => e.currentTarget.style.color = 'var(--cyber-red-bright)'}
+                                onmouseleave={(e) => e.currentTarget.style.color = 'var(--text-muted)'}
+                                onclick={() => (phaseToDelete = phase)}
+                            >x</button>
+                        {/if}
+                    </div>
+                {/each}
+            </div>
+        {/if}
+
+        <!-- Create new -->
+        <div class="pt-4" style="border-top: 1px solid rgba(252,238,10,0.08);">
+            {#if creatingNew}
+                <div class="flex flex-col gap-2">
+                    <div class="flex items-center gap-2">
+                        <input type="color" bind:value={newColor} class="w-8 h-8 cursor-pointer" />
+                        <input
+                            bind:value={newName}
+                            type="text"
+                            placeholder="New phase name..."
+                            class="flex-1 bg-cyber-dark px-3 py-1.5 text-xs font-rajdhani font-semibold text-white focus:outline-none transition-colors"
+                            style="border: 1px solid rgba(252,238,10,0.15);"
+                            onfocus={(e) => e.currentTarget.style.borderColor = 'var(--cyber-yellow)'}
+                            onblur={(e) => e.currentTarget.style.borderColor = 'rgba(252,238,10,0.15)'}
+                            onkeydown={(e) => { if (e.key === 'Enter') createPhase(); if (e.key === 'Escape') creatingNew = false; }}
+                        />
+                    </div>
+                    <div class="flex gap-2">
+                        <button
+                            class="flex-1 py-1.5 text-xs font-rajdhani font-bold uppercase tracking-wider transition-all clip-cyber-sm disabled:opacity-50"
+                            style="border: 1px solid var(--cyber-yellow); color: var(--cyber-yellow);"
+                            onmouseenter={(e) => { e.currentTarget.style.background = 'var(--cyber-yellow)'; e.currentTarget.style.color = '#0D0D12'; }}
+                            onmouseleave={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'var(--cyber-yellow)'; }}
+                            onclick={createPhase}
+                            disabled={savingNew}
+                        >
+                            {savingNew ? 'Creating...' : 'Create Phase'}
+                        </button>
+                        <button
+                            class="px-3 py-1.5 text-xs font-rajdhani font-semibold uppercase transition-all"
+                            style="color: var(--text-muted); border: 1px solid rgba(252,238,10,0.1);"
+                            onmouseenter={(e) => { e.currentTarget.style.color = 'var(--cyber-yellow)'; e.currentTarget.style.borderColor = 'var(--cyber-yellow)'; }}
+                            onmouseleave={(e) => { e.currentTarget.style.color = 'var(--text-muted)'; e.currentTarget.style.borderColor = 'rgba(252,238,10,0.1)'; }}
+                            onclick={() => (creatingNew = false)}
+                        >
+                            Cancel
+                        </button>
+                    </div>
+                </div>
+            {:else}
+                <button
+                    class="w-full py-2 text-xs font-rajdhani font-semibold uppercase tracking-wider transition-all flex items-center justify-center gap-2"
+                    style="color: var(--text-muted); border: 1px dashed rgba(252,238,10,0.12);"
+                    onmouseenter={(e) => { e.currentTarget.style.color = 'var(--cyber-yellow)'; e.currentTarget.style.borderColor = 'rgba(252,238,10,0.3)'; }}
+                    onmouseleave={(e) => { e.currentTarget.style.color = 'var(--text-muted)'; e.currentTarget.style.borderColor = 'rgba(252,238,10,0.12)'; }}
+                    onclick={() => (creatingNew = true)}
+                >
+                    <span>+</span> Add New Phase
+                </button>
+            {/if}
+        </div>
+    </div>
+</Modal>

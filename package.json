@@ -40,7 +40,6 @@
     "vitest": "^1.0.0"
   },
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.0.0",
     "better-sqlite3": "^12.9.0",
     "drizzle-orm": "^0.45.2",
     "marked": "^14.1.4",

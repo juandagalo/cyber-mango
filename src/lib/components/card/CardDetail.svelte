@@ -1,18 +1,20 @@
 <script lang="ts">
     import { tick, untrack } from 'svelte';
     import { marked } from 'marked';
-    import type { CardWithTags, Priority, Tag } from '$lib/types/board.js';
+    import type { CardWithTags, Priority, Phase, Tag } from '$lib/types/board.js';
     import Modal from '$lib/components/ui/Modal.svelte';
     import ConfirmDialog from '$lib/components/ui/ConfirmDialog.svelte';
     import PriorityBadge from './PriorityBadge.svelte';
+    import PhaseTracker from './PhaseTracker.svelte';
     import TagBadge from '$lib/components/tag/TagBadge.svelte';
     import TagPicker from '$lib/components/tag/TagPicker.svelte';
     import { updateCardInStore, removeCardFromStore } from '$lib/stores/board.js';
     import { addToast } from '$lib/stores/toast.js';
 
-    let { card, boardId, onclose, onupdated, ondeleted }: {
+    let { card, boardId, phases = [], onclose, onupdated, ondeleted }: {
         card: CardWithTags;
         boardId: string;
+        phases?: Phase[];
         onclose?: () => void;
         onupdated?: (card: CardWithTags) => void;
         ondeleted?: () => void;
@@ -24,6 +26,9 @@
     let priority = $state<Priority>(untrack(() => card.priority));
     let tags = $state<Tag[]>(untrack(() => [...card.tags]));
     let assignedTagIds = $state<string[]>(untrack(() => card.tags.map(t => t.id)));
+
+    let currentPhaseId = $state<string | null>(untrack(() => card.phase?.id ?? null));
+    let savingPhase = $state(false);
 
     let savingTitle = $state(false);
     let savingDesc = $state(false);
@@ -142,6 +147,32 @@
             priority = card.priority;
         } finally {
             savingPriority = false;
+        }
+    }
+
+    async function changePhase(phaseId: string | null) {
+        const prevPhaseId = currentPhaseId;
+        currentPhaseId = phaseId;
+        savingPhase = true;
+        try {
+            const res = await fetch(`/api/cards/${card.id}`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ phaseId })
+            });
+            if (res.ok) {
+                const resolvedPhase = phaseId ? phases.find(p => p.id === phaseId) ?? null : null;
+                updateCardInStore(card.id, { phase: resolvedPhase });
+                onupdated?.({ ...card, phase: resolvedPhase });
+            } else {
+                addToast('Failed to update phase');
+                currentPhaseId = prevPhaseId;
+            }
+        } catch {
+            addToast('Failed to update phase');
+            currentPhaseId = prevPhaseId;
+        } finally {
+            savingPhase = false;
         }
     }
 
@@ -284,6 +315,9 @@
                         {/each}
                     </div>
                 </div>
+
+                <!-- Phase -->
+                <PhaseTracker {phases} {currentPhaseId} onchange={changePhase} />
 
                 <!-- Tags -->
                 <div class="flex flex-col gap-2">

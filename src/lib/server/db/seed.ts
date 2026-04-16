@@ -1,6 +1,6 @@
 import { nanoid } from 'nanoid';
 import { getDb } from './connection.js';
-import { boards, columns } from './schema.js';
+import { boards, columns, phases } from './schema.js';
 import { count } from 'drizzle-orm';
 
 export function seedDefaultBoard(): string {
@@ -38,6 +38,26 @@ export function seedDefaultBoard(): string {
 			name: col.name,
 			position: col.position,
 			color: col.color,
+			createdAt: now,
+			updatedAt: now,
+		}).run();
+	}
+
+	const defaultPhases = [
+		{ name: 'Development',     color: '#00FFFF', position: 1.0 },
+		{ name: 'Code Review',     color: '#BF00FF', position: 2.0 },
+		{ name: 'QA',              color: '#FCEE0A', position: 3.0 },
+		{ name: 'Client Review',   color: '#FF00FF', position: 4.0 },
+		{ name: 'Ready to Deploy', color: '#39FF14', position: 5.0 },
+	];
+
+	for (const p of defaultPhases) {
+		db.insert(phases).values({
+			id: nanoid(12),
+			boardId,
+			name: p.name,
+			color: p.color,
+			position: p.position,
 			createdAt: now,
 			updatedAt: now,
 		}).run();

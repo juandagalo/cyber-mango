@@ -38,8 +38,19 @@ export interface Tag {
 	createdAt: string;
 }
 
+export interface Phase {
+	id: string;
+	boardId: string;
+	name: string;
+	color: string;
+	position: number;
+	createdAt: string;
+	updatedAt: string;
+}
+
 export interface CardWithTags extends Card {
 	tags: Tag[];
+	phase: Phase | null;
 }
 
 export interface ColumnWithCards extends Column {
@@ -48,6 +59,7 @@ export interface ColumnWithCards extends Column {
 
 export interface BoardWithColumns extends Board {
 	columns: ColumnWithCards[];
+	phases: Phase[];
 }
 
 export interface BoardSummary {
@@ -56,5 +68,6 @@ export interface BoardSummary {
 	totalCards: number;
 	cardsByColumn: { columnId: string; columnName: string; count: number; wipLimit: number | null }[];
 	cardsByPriority: { priority: Priority; count: number }[];
+	cardsByPhase: { phaseId: string | null; phaseName: string | null; count: number }[];
 	totalTags: number;
 }

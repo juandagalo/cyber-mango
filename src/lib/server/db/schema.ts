@@ -29,12 +29,26 @@ export const cards = sqliteTable('cards', {
 	description: text('description').default(''),
 	priority: text('priority', { enum: ['low', 'medium', 'high', 'critical'] }).default('medium'),
 	position: real('position').notNull(),
+	phaseId: text('phase_id').references(() => phases.id, { onDelete: 'set null' }),
 	parentCardId: text('parent_card_id'),
 	dueDate: text('due_date'),
 	createdAt: text('created_at').notNull().default(sql`(datetime('now'))`),
 	updatedAt: text('updated_at').notNull().default(sql`(datetime('now'))`)
 }, (t) => [
 	index('idx_cards_column_position').on(t.columnId, t.position)
+]);
+
+export const phases = sqliteTable('phases', {
+	id: text('id').primaryKey(),
+	boardId: text('board_id').notNull().references(() => boards.id, { onDelete: 'cascade' }),
+	name: text('name').notNull(),
+	color: text('color').notNull().default('#00FFFF'),
+	position: real('position').notNull(),
+	createdAt: text('created_at').notNull().default(sql`(datetime('now'))`),
+	updatedAt: text('updated_at').notNull().default(sql`(datetime('now'))`)
+}, (t) => [
+	index('idx_phases_board_position').on(t.boardId, t.position),
+	uniqueIndex('idx_phases_board_name').on(t.boardId, t.name)
 ]);
 
 export const tags = sqliteTable('tags', {

@@ -1,15 +1,15 @@
 import { eq, asc, max } from 'drizzle-orm';
 import { nanoid } from 'nanoid';
 import type { DrizzleDb } from '../db/connection.js';
-import { columns, cards, tags, cardTags } from '../db/schema.js';
+import { columns, cards, tags, cardTags, phases } from '../db/schema.js';
 import { NotFoundError, ValidationError } from '../errors.js';
 import { generatePositions } from '../../utils/position.js';
-import type { CardWithTags, Priority } from '../../types/board.js';
+import type { CardWithTags, Priority, Phase } from '../../types/board.js';
 
 export class CardService {
     constructor(private readonly db: DrizzleDb) {}
 
-    create(input: { columnId: string; title: string; description?: string; priority?: string }): CardWithTags {
+    create(input: { columnId: string; title: string; description?: string; priority?: string; phaseId?: string }): CardWithTags {
         if (!input.title || input.title.trim().length === 0) {
             throw new ValidationError('Card title cannot be empty');
         }
@@ -17,6 +17,13 @@ export class CardService {
         const column = this.db.select({ id: columns.id }).from(columns).where(eq(columns.id, input.columnId)).get();
         if (!column) {
             throw new NotFoundError('Column', input.columnId);
+        }
+
+        if (input.phaseId) {
+            const phase = this.db.select({ id: phases.id }).from(phases).where(eq(phases.id, input.phaseId)).get();
+            if (!phase) {
+                throw new NotFoundError('Phase', input.phaseId);
+            }
         }
 
         const maxResult = this.db
@@ -36,6 +43,7 @@ export class CardService {
             description: input.description ?? '',
             priority: (input.priority as Priority) ?? 'medium',
             position,
+            phaseId: input.phaseId ?? null,
             createdAt: now,
             updatedAt: now
         }).run();
@@ -62,6 +70,14 @@ export class CardService {
             .where(eq(cardTags.cardId, cardId))
             .all();
 
+        let phase: Phase | null = null;
+        if (card.phaseId) {
+            const phaseRow = this.db.select().from(phases).where(eq(phases.id, card.phaseId)).get();
+            if (phaseRow) {
+                phase = phaseRow as Phase;
+            }
+        }
+
         return {
             id: card.id,
             columnId: card.columnId,
@@ -77,11 +93,12 @@ export class CardService {
                 name: t.tagName,
                 color: t.tagColor,
                 createdAt: t.tagCreatedAt
-            }))
+            })),
+            phase
         };
     }
 
-    update(cardId: string, input: { title?: string; description?: string; priority?: string }): CardWithTags {
+    update(cardId: string, input: { title?: string; description?: string; priority?: string; phaseId?: string | null }): CardWithTags {
         const card = this.db.select().from(cards).where(eq(cards.id, cardId)).get();
         if (!card) {
             throw new NotFoundError('Card', cardId);
@@ -89,6 +106,13 @@ export class CardService {
 
         if (input.title !== undefined && input.title.trim().length === 0) {
             throw new ValidationError('Card title cannot be empty');
+        }
+
+        if (input.phaseId !== undefined && input.phaseId !== null) {
+            const phase = this.db.select({ id: phases.id }).from(phases).where(eq(phases.id, input.phaseId)).get();
+            if (!phase) {
+                throw new NotFoundError('Phase', input.phaseId);
+            }
         }
 
         const now = new Date().toISOString();
@@ -102,6 +126,9 @@ export class CardService {
         }
         if (input.priority !== undefined) {
             updateValues.priority = input.priority as Priority;
+        }
+        if (input.phaseId !== undefined) {
+            updateValues.phaseId = input.phaseId;
         }
 
         this.db.update(cards).set(updateValues).where(eq(cards.id, cardId)).run();

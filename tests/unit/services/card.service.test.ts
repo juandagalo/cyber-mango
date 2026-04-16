@@ -3,12 +3,14 @@ import { createTestDb } from '../../helpers/db.js';
 import { BoardService } from '../../../src/lib/server/services/board.service.js';
 import { ColumnService } from '../../../src/lib/server/services/column.service.js';
 import { CardService } from '../../../src/lib/server/services/card.service.js';
+import { PhaseService } from '../../../src/lib/server/services/phase.service.js';
 import { NotFoundError, ValidationError } from '../../../src/lib/server/errors.js';
 
 describe('CardService', () => {
     let boardService: BoardService;
     let columnService: ColumnService;
     let cardService: CardService;
+    let phaseService: PhaseService;
     let boardId: string;
     let columnId: string;
 
@@ -17,6 +19,7 @@ describe('CardService', () => {
         boardService = new BoardService(db);
         columnService = new ColumnService(db);
         cardService = new CardService(db);
+        phaseService = new PhaseService(db);
         const board = boardService.createBoard({ name: 'Test Board' });
         boardId = board.id;
         const col = columnService.create({ boardId, name: 'To Do' });
@@ -118,6 +121,53 @@ describe('CardService', () => {
 
         it('throws NotFoundError for unknown card', () => {
             expect(() => cardService.delete('nonexistent')).toThrow(NotFoundError);
+        });
+    });
+
+    describe('phaseId support', () => {
+        it('creates a card with phaseId', () => {
+            const phase = phaseService.create({ boardId, name: 'Dev' });
+            const card = cardService.create({ columnId, title: 'Card', phaseId: phase.id });
+            expect(card.phase).not.toBeNull();
+            expect(card.phase!.id).toBe(phase.id);
+            expect(card.phase!.name).toBe('Dev');
+        });
+
+        it('creates a card without phaseId — phase is null', () => {
+            const card = cardService.create({ columnId, title: 'Card' });
+            expect(card.phase).toBeNull();
+        });
+
+        it('throws NotFoundError for invalid phaseId on create', () => {
+            expect(() => cardService.create({ columnId, title: 'Card', phaseId: 'nonexistent' })).toThrow(NotFoundError);
+        });
+
+        it('updates card with phaseId', () => {
+            const phase = phaseService.create({ boardId, name: 'QA' });
+            const card = cardService.create({ columnId, title: 'Card' });
+            const updated = cardService.update(card.id, { phaseId: phase.id });
+            expect(updated.phase).not.toBeNull();
+            expect(updated.phase!.id).toBe(phase.id);
+        });
+
+        it('unsets phase with phaseId: null', () => {
+            const phase = phaseService.create({ boardId, name: 'QA' });
+            const card = cardService.create({ columnId, title: 'Card', phaseId: phase.id });
+            const updated = cardService.update(card.id, { phaseId: null });
+            expect(updated.phase).toBeNull();
+        });
+
+        it('does not change phase when phaseId is undefined', () => {
+            const phase = phaseService.create({ boardId, name: 'QA' });
+            const card = cardService.create({ columnId, title: 'Card', phaseId: phase.id });
+            const updated = cardService.update(card.id, { title: 'New Title' });
+            expect(updated.phase).not.toBeNull();
+            expect(updated.phase!.id).toBe(phase.id);
+        });
+
+        it('throws NotFoundError for invalid phaseId on update', () => {
+            const card = cardService.create({ columnId, title: 'Card' });
+            expect(() => cardService.update(card.id, { phaseId: 'nonexistent' })).toThrow(NotFoundError);
         });
     });
 

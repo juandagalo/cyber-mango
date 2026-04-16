@@ -34,7 +34,6 @@ src/
 │   ├── +layout.svelte    # Root layout with cyberpunk header
 │   ├── +page.svelte      # Main board view
 │   └── +page.server.ts   # SSR load
-├── mcp/                  # MCP server (also available as standalone plugin)
 ├── hooks.server.ts       # Runs migrations + seed on startup
 └── app.css               # Cyberpunk design tokens + custom scrollbar
 ```

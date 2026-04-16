@@ -1,6 +1,7 @@
 <script lang="ts">
     import type { CardWithTags } from '$lib/types/board.js';
     import PriorityBadge from './PriorityBadge.svelte';
+    import PhaseBadge from './PhaseBadge.svelte';
     import TagBadge from '$lib/components/tag/TagBadge.svelte';
 
     let { card, onopen }: {
@@ -53,7 +54,12 @@
         <p class="text-sm font-rajdhani font-semibold leading-snug break-words" style="color: var(--text-primary);">{card.title}</p>
 
         <div class="flex items-center justify-between gap-2 flex-wrap">
-            <PriorityBadge priority={card.priority} />
+            <div class="flex items-center gap-1.5">
+                <PriorityBadge priority={card.priority} />
+                {#if card.phase}
+                    <PhaseBadge phase={card.phase} />
+                {/if}
+            </div>
 
             {#if card.tags.length > 0}
                 <div class="flex items-center gap-1 flex-wrap">

@@ -230,15 +230,13 @@
 
                 <!-- Title -->
                 <div class="flex flex-col gap-1.5">
-                    <label for="card-title" class="text-[10px] font-rajdhani font-semibold uppercase tracking-[0.12em]" style="color: var(--text-muted);">// Title</label>
+                    <label for="card-title" class="text-[10px] font-rajdhani font-semibold uppercase tracking-[0.12em] text-cyber-muted">// Title</label>
                     <input
                         id="card-title"
                         bind:value={title}
                         type="text"
-                        class="bg-transparent px-3 py-2 text-sm font-rajdhani font-semibold text-white focus:outline-none transition-colors"
-                        style="border: 1px solid rgba(252,238,10,0.12);"
-                        onfocus={(e) => e.currentTarget.style.borderColor = 'var(--cyber-yellow)'}
-                        onblur={(e) => { e.currentTarget.style.borderColor = 'rgba(252,238,10,0.12)'; saveTitle(); }}
+                        class="bg-transparent px-3 py-2 text-sm font-rajdhani font-semibold text-white focus:outline-none transition-colors border cyber-input"
+                        onblur={saveTitle}
                         oninput={onTitleInput}
                     />
                 </div>
@@ -246,11 +244,11 @@
                 <!-- Description -->
                 <div class="flex flex-col gap-1.5 flex-1 min-h-0">
                     <div class="flex items-center justify-between">
-                        <label for="card-desc" class="text-[10px] font-rajdhani font-semibold uppercase tracking-[0.12em]" style="color: var(--text-muted);">// Description</label>
+                        <label for="card-desc" class="text-[10px] font-rajdhani font-semibold uppercase tracking-[0.12em] text-cyber-muted">// Description</label>
                         <button
-                            class="text-[10px] font-rajdhani font-bold uppercase tracking-wider px-2 py-0.5 transition-colors"
+                            class="text-[10px] font-rajdhani font-bold uppercase tracking-wider px-2 py-0.5 transition-colors border"
                             class:cyber-hover-muted={!editingDescription}
-                            style="color: {editingDescription ? 'var(--cyber-cyan)' : ''}; border: 1px solid {editingDescription ? 'rgba(2,215,242,0.3)' : 'transparent'}; background: {editingDescription ? 'rgba(2,215,242,0.05)' : 'transparent'};"
+                            class:desc-edit-active={editingDescription}
                             onclick={() => { editingDescription = !editingDescription; }}
                         >
                             {editingDescription ? 'Preview' : 'Edit'}
@@ -263,17 +261,13 @@
                             bind:value={description}
                             rows="12"
                             placeholder="Add a description... (supports markdown)"
-                            class="bg-transparent px-3 py-2 text-sm font-mono resize-none flex-1 min-h-0 focus:outline-none transition-colors"
-                            style="border: 1px solid rgba(252,238,10,0.12); color: var(--text-primary);"
-                            onfocus={(e) => e.currentTarget.style.borderColor = 'var(--cyber-yellow)'}
-                            onblur={(e) => { e.currentTarget.style.borderColor = 'rgba(252,238,10,0.12)'; saveDescription(); }}
+                            class="bg-transparent px-3 py-2 text-sm font-mono resize-none flex-1 min-h-0 focus:outline-none transition-colors border text-cyber-primary cyber-input"
+                            onblur={saveDescription}
                             oninput={onDescInput}
                         ></textarea>
                     {:else}
-                        <!-- svelte-ignore a11y_click_events_have_key_events a11y_no_static_element_interactions -->
                         <div
-                            class="markdown-body px-4 py-3 text-sm flex-1 min-h-0 overflow-y-auto cursor-text"
-                            style="border: 1px solid rgba(252,238,10,0.08); color: var(--text-primary);"
+                            class="markdown-body px-4 py-3 text-sm flex-1 min-h-0 overflow-y-auto cursor-text text-cyber-primary cyber-border-soft"
                             ondblclick={() => { editingDescription = true; }}
                             role="button"
                             tabindex="0"
@@ -282,7 +276,7 @@
                             {#if description}
                                 {@html renderedDescription}
                             {:else}
-                                <p class="italic" style="color: var(--text-muted);">Double-click to add a description...</p>
+                                <p class="italic text-cyber-muted">Double-click to add a description...</p>
                             {/if}
                         </div>
                     {/if}
@@ -290,11 +284,11 @@
             </div>
 
             <!-- Right column: Priority, Tags, Timestamps, Delete -->
-            <div class="flex flex-col gap-5 md:pl-6 overflow-y-auto min-h-0" style="border-left: 1px solid rgba(252,238,10,0.06);">
+            <div class="flex flex-col gap-5 md:pl-6 overflow-y-auto min-h-0 cyber-panel-divider">
 
                 <!-- Priority -->
                 <div class="flex flex-col gap-2">
-                    <span class="text-[10px] font-rajdhani font-semibold uppercase tracking-[0.12em]" style="color: var(--text-muted);">// Priority</span>
+                    <span class="text-[10px] font-rajdhani font-semibold uppercase tracking-[0.12em] text-cyber-muted">// Priority</span>
                     <div class="flex gap-2 flex-wrap">
                         {#each priorities as p}
                             <button
@@ -321,15 +315,14 @@
 
                 <!-- Tags -->
                 <div class="flex flex-col gap-2">
-                    <span class="text-[10px] font-rajdhani font-semibold uppercase tracking-[0.12em]" style="color: var(--text-muted);">// Tags</span>
+                    <span class="text-[10px] font-rajdhani font-semibold uppercase tracking-[0.12em] text-cyber-muted">// Tags</span>
                     <div class="flex flex-wrap gap-1.5 items-center">
                         {#each tags as tag (tag.id)}
                             <TagBadge {tag} />
                         {/each}
                         <div class="relative">
                             <button
-                                class="px-2 py-0.5 text-[10px] font-rajdhani font-semibold uppercase cyber-hover-cancel"
-                                style="border: 1px solid;"
+                                class="px-2 py-0.5 text-[10px] font-rajdhani font-semibold uppercase border cyber-hover-cancel"
                                 onclick={(e: MouseEvent) => { e.stopPropagation(); showTagPicker = !showTagPicker; }}
                             >
                                 + Tag
@@ -338,8 +331,7 @@
                             {#if showTagPicker}
                                 <!-- svelte-ignore a11y_click_events_have_key_events -->
                                 <div
-                                    class="absolute right-0 top-full mt-1 z-30 overflow-hidden clip-cyber-sm"
-                                    style="background: var(--bg-surface); border: 1px solid rgba(252,238,10,0.2); box-shadow: 0 8px 24px rgba(0,0,0,0.7); min-width: 220px;"
+                                    class="absolute right-0 top-full mt-1 z-30 overflow-hidden clip-cyber-sm cyber-surface-panel min-w-[220px]"
                                     onclick={(e: MouseEvent) => e.stopPropagation()}
                                     role="presentation"
                                 >
@@ -364,22 +356,21 @@
                 </div>
 
                 <!-- Timestamps -->
-                <div class="flex flex-col gap-2 text-[10px] font-mono pt-3" style="border-top: 1px solid rgba(252,238,10,0.06); color: var(--text-muted);">
+                <div class="flex flex-col gap-2 text-[10px] font-mono pt-3 text-cyber-muted cyber-divider-hairline">
                     <div>
                         <span class="uppercase tracking-wider">Created</span>
-                        <span class="ml-2" style="color: var(--cyber-cyan);">{formatDate(card.createdAt)}</span>
+                        <span class="ml-2 text-cyber-cyan">{formatDate(card.createdAt)}</span>
                     </div>
                     <div>
                         <span class="uppercase tracking-wider">Updated</span>
-                        <span class="ml-2" style="color: var(--cyber-cyan);">{formatDate(card.updatedAt)}</span>
+                        <span class="ml-2 text-cyber-cyan">{formatDate(card.updatedAt)}</span>
                     </div>
                 </div>
 
                 <!-- Delete -->
-                <div class="pt-3 mt-auto" style="border-top: 1px solid rgba(197,0,60,0.15);">
+                <div class="pt-3 mt-auto cyber-divider-red">
                     <button
-                        class="w-full px-4 py-2 text-xs font-rajdhani font-bold uppercase tracking-wider clip-cyber-sm cyber-hover-fill-red"
-                        style="border: 1px solid;"
+                        class="w-full px-4 py-2 text-xs font-rajdhani font-bold uppercase tracking-wider clip-cyber-sm cyber-hover-fill-red border"
                         onclick={() => (showConfirmDelete = true)}
                     >
                         Delete Card

@@ -18,10 +18,10 @@
 </script>
 
 <div class="flex flex-col gap-2">
-    <span class="text-[10px] font-rajdhani font-semibold uppercase tracking-[0.12em]" style="color: var(--text-muted);">// Phase</span>
+    <span class="text-[10px] font-rajdhani font-semibold uppercase tracking-[0.12em] text-cyber-muted">// Phase</span>
 
     {#if phases.length === 0}
-        <span class="text-xs font-mono" style="color: var(--text-muted);">No phases defined</span>
+        <span class="text-xs font-mono text-cyber-muted">No phases defined</span>
     {:else}
         <div class="flex gap-0.5">
             {#each phases as phase, i (phase.id)}
@@ -62,7 +62,7 @@
                     x
                 </button>
             {:else}
-                <span class="text-xs font-rajdhani" style="color: var(--text-muted);">Unassigned</span>
+                <span class="text-xs font-rajdhani text-cyber-muted">Unassigned</span>
             {/if}
         </div>
     {/if}

@@ -58,10 +58,7 @@
         type="text"
         placeholder="+ Add card..."
         disabled={loading}
-        class="w-full bg-transparent px-3 py-1.5 text-xs font-mono transition-colors disabled:opacity-50"
-        style="border: 1px solid rgba(252,238,10,0.06); color: var(--text-muted);"
-        onfocus={(e) => { e.currentTarget.style.borderColor = 'rgba(252,238,10,0.25)'; e.currentTarget.style.color = '#D4D4D4'; }}
-        onblur={(e) => { e.currentTarget.style.borderColor = 'rgba(252,238,10,0.06)'; e.currentTarget.style.color = 'var(--text-muted)'; }}
+        class="w-full bg-transparent px-3 py-1.5 text-xs font-mono disabled:opacity-50 border cyber-input-quickadd"
         onkeydown={handleKeydown}
     />
 </div>

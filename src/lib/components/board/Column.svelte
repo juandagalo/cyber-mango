@@ -2,6 +2,7 @@
     import { untrack } from 'svelte';
     import { dndzone, SHADOW_ITEM_MARKER_PROPERTY_NAME } from 'svelte-dnd-action';
     import type { ColumnWithCards, CardWithTags } from '$lib/types/board.js';
+    import { hexToRgb } from '$lib/utils/color.js';
     import Card from '$lib/components/card/Card.svelte';
     import CardQuickAdd from '$lib/components/card/CardQuickAdd.svelte';
     import EmptyState from '$lib/components/ui/EmptyState.svelte';
@@ -15,8 +16,8 @@
         onopencard?: (card: CardWithTags) => void;
     } = $props();
 
-    // Local items for DnD
-    let items = $state<CardWithTags[]>(untrack(() => [...column.cards]));
+    // Local items for DnD - $effect is the source of truth, syncing from props
+    let items = $state<CardWithTags[]>([]);
     $effect(() => {
         items = [...column.cards];
     });
@@ -202,7 +203,6 @@
     }
 </script>
 
-<!-- svelte-ignore a11y_click_events_have_key_events a11y_no_static_element_interactions -->
 {#if showConfirmDelete}
     <ConfirmDialog
         message="Delete column '{column.name}'? This will delete all {column.cards.length} card(s) inside it. This cannot be undone."
@@ -212,16 +212,14 @@
     />
 {/if}
 
-<div class="flex flex-col flex-shrink-0 w-[280px] h-full overflow-hidden relative"
-     style="background: var(--bg-surface); border: 1px solid rgba(252,238,10,0.06);">
+<div class="flex flex-col flex-shrink-0 w-[280px] h-full overflow-hidden relative bg-cyber-surface-token cyber-border-hairline">
 
     <!-- Color accent bar — full height cyberware heartbeat -->
     <div class="absolute left-0 top-0 bottom-0 w-[4px] accent-bar-pulse z-10" style="background: {headerColor}; color: {headerColor};"></div>
 
     <!-- Column Header -->
     <div class="flex items-center gap-2 px-3 py-2 flex-shrink-0 relative"
-         style="background: linear-gradient(90deg, {headerColor}10, transparent);
-                border-bottom: 2px solid {headerColor}50;">
+         style="background: linear-gradient(90deg, rgba({hexToRgb(headerColor)},0.06), transparent); border-bottom: 2px solid rgba({hexToRgb(headerColor)},0.31);">
 
         {#if renaming}
             <input
@@ -248,9 +246,8 @@
         <!-- Card count / WIP badge -->
         <span
             class="text-[10px] font-mono px-1.5 py-0.5"
-            style="border: 1px solid {wipExceeded ? 'var(--cyber-red-bright)' : 'rgba(252,238,10,0.12)'};
-                   color: {wipExceeded ? 'var(--cyber-red-bright)' : 'var(--text-muted)'};
-                   {wipExceeded ? 'background: rgba(255,0,60,0.1);' : ''}"
+            class:wip-badge-normal={!wipExceeded}
+            class:wip-badge-exceeded={wipExceeded}
         >
             {column.cards.length}{column.wipLimit !== null ? `/${column.wipLimit}` : ''}
         </span>
@@ -269,8 +266,7 @@
             {#if menuOpen}
                 <!-- svelte-ignore a11y_click_events_have_key_events -->
                 <div
-                    class="absolute right-0 top-full mt-1 w-44 z-20 overflow-hidden clip-cyber-sm"
-                    style="background: var(--bg-card); border: 1px solid rgba(252,238,10,0.2); box-shadow: 0 8px 24px rgba(0,0,0,0.7), 0 0 12px rgba(252,238,10,0.05);"
+                    class="absolute right-0 top-full mt-1 w-44 z-20 overflow-hidden clip-cyber-sm cyber-dropdown-panel"
                     onclick={(e: MouseEvent) => e.stopPropagation()}
                     role="presentation"
                 >
@@ -317,10 +313,7 @@
                                 bind:value={wipValue}
                                 min="1"
                                 placeholder="No limit"
-                                class="w-16 bg-cyber-dark border px-2 py-1 text-xs font-mono text-white focus:outline-none"
-                                style="border-color: rgba(252,238,10,0.15);"
-                                onfocus={(e) => e.currentTarget.style.borderColor = 'var(--cyber-yellow)'}
-                                onblur={(e) => e.currentTarget.style.borderColor = 'rgba(252,238,10,0.15)'}
+                                class="w-16 bg-cyber-dark border px-2 py-1 text-xs font-mono text-white focus:outline-none cyber-input"
                             />
                             <button
                                 class="text-xs font-rajdhani font-semibold text-cyber-yellow hover:underline uppercase"
@@ -329,10 +322,9 @@
                         </div>
                     {/if}
 
-                    <div class="mt-1" style="border-top: 1px solid rgba(197,0,60,0.25);"></div>
+                    <div class="mt-1 cyber-divider-red-subtle"></div>
                     <button
-                        class="w-full text-left px-3 py-2 text-xs font-rajdhani font-semibold uppercase tracking-wider cyber-hover-red"
-                        style="color: var(--cyber-red-bright);"
+                        class="w-full text-left px-3 py-2 text-xs font-rajdhani font-semibold uppercase tracking-wider cyber-hover-red text-cyber-red-bright"
                         onclick={() => { showConfirmDelete = true; menuOpen = false; }}
                     >
                         Delete Column
@@ -364,7 +356,7 @@
     </div>
 
     <!-- Quick add footer -->
-    <div class="flex-shrink-0" style="border-top: 1px solid rgba(252,238,10,0.05);">
+    <div class="flex-shrink-0 cyber-divider-faint">
         <CardQuickAdd columnId={column.id} />
     </div>
 </div>

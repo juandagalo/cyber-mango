@@ -28,29 +28,21 @@
     const visibleTags = $derived(card.tags.slice(0, 3));
     const extraTagCount = $derived(card.tags.length - 3);
 
-    let hovered = $state(false);
-
     function handleClick() {
         onopen?.(card);
     }
 </script>
 
 <div
-    class="cursor-pointer select-none transition-all duration-150 px-3 py-2.5 corner-brackets hover-sweep"
-    style="
-        background: var(--bg-card);
-        border-left: 2px solid {borderColor};
-        {hovered ? `box-shadow: -2px 0 8px ${glowColor}, 0 0 15px ${glowColor}; background: var(--bg-elevated);` : 'box-shadow: none;'}
-    "
-    onmouseenter={() => (hovered = true)}
-    onmouseleave={() => (hovered = false)}
+    class="cursor-pointer select-none transition-all duration-150 px-3 py-2.5 corner-brackets hover-sweep card-hoverable"
+    style="border-left: 2px solid {borderColor}; --glow-color: {glowColor};"
     onclick={handleClick}
     role="button"
     tabindex="0"
     onkeydown={(e) => e.key === 'Enter' && handleClick()}
 >
     <div class="flex flex-col gap-1.5">
-        <p class="text-sm font-rajdhani font-semibold leading-snug break-words" style="color: var(--text-primary);">{card.title}</p>
+        <p class="text-sm font-rajdhani font-semibold leading-snug break-words text-cyber-primary">{card.title}</p>
 
         <div class="flex items-center justify-between gap-2 flex-wrap">
             <div class="flex items-center gap-1.5">
@@ -66,7 +58,7 @@
                         <TagBadge {tag} />
                     {/each}
                     {#if extraTagCount > 0}
-                        <span class="text-[10px] font-mono" style="color: var(--text-muted);">+{extraTagCount}</span>
+                        <span class="text-[10px] font-mono text-cyber-muted">+{extraTagCount}</span>
                     {/if}
                 </div>
             {/if}

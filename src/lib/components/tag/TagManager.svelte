@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { onMount } from 'svelte';
     import type { Tag } from '$lib/types/board.js';
     import Modal from '$lib/components/ui/Modal.svelte';
     import ConfirmDialog from '$lib/components/ui/ConfirmDialog.svelte';
@@ -116,7 +117,9 @@
         }
     }
 
-    loadTags();
+    onMount(() => {
+        loadTags();
+    });
 </script>
 
 {#if tagToDelete}
@@ -132,16 +135,13 @@
     <div class="px-6 py-4 flex flex-col gap-4">
 
         {#if loading}
-            <p class="text-xs font-rajdhani text-center py-8" style="color: var(--text-muted);">Loading tags...</p>
+            <p class="text-xs font-rajdhani text-center py-8 text-cyber-muted">Loading tags...</p>
         {:else if tags.length === 0}
-            <p class="text-xs font-rajdhani text-center py-8" style="color: var(--text-muted);">No tags yet. Create one below.</p>
+            <p class="text-xs font-rajdhani text-center py-8 text-cyber-muted">No tags yet. Create one below.</p>
         {:else}
             <div class="flex flex-col gap-1">
                 {#each tags as tag (tag.id)}
-                    <div
-                        class="flex items-center gap-3 px-3 py-2"
-                        style="background: var(--bg-card);"
-                    >
+                    <div class="flex items-center gap-3 px-3 py-2 bg-cyber-card-token">
                         {#if editingId === tag.id}
                             <input
                                 type="color"
@@ -151,16 +151,14 @@
                             <input
                                 bind:value={editName}
                                 type="text"
-                                class="flex-1 bg-transparent text-white text-xs font-rajdhani font-semibold focus:outline-none"
-                                style="border-bottom: 1px solid var(--cyber-yellow);"
+                                class="flex-1 bg-transparent text-white text-xs font-rajdhani font-semibold focus:outline-none cyber-input-underline"
                                 onkeydown={(e) => {
                                     if (e.key === 'Enter') saveEdit(tag.id);
                                     if (e.key === 'Escape') cancelEdit();
                                 }}
                             />
                             <button
-                                class="text-xs font-rajdhani font-bold flex-shrink-0 uppercase"
-                                style="color: var(--cyber-yellow);"
+                                class="text-xs font-rajdhani font-bold flex-shrink-0 uppercase text-cyber-yellow"
                                 onclick={() => saveEdit(tag.id)}
                             >Save</button>
                             <button
@@ -169,7 +167,7 @@
                             >x</button>
                         {:else}
                             <span class="w-3 h-3 flex-shrink-0" style="background: {tag.color}; box-shadow: 0 0 4px {tag.color};"></span>
-                            <span class="flex-1 text-xs font-rajdhani font-semibold truncate" style="color: var(--text-primary);">{tag.name}</span>
+                            <span class="flex-1 text-xs font-rajdhani font-semibold truncate text-cyber-primary">{tag.name}</span>
                             <button
                                 class="text-[10px] font-rajdhani font-bold uppercase flex-shrink-0 px-1 cyber-hover-muted"
                                 onclick={() => startEdit(tag)}
@@ -185,7 +183,7 @@
         {/if}
 
         <!-- Create new -->
-        <div class="pt-4" style="border-top: 1px solid rgba(252,238,10,0.08);">
+        <div class="pt-4 cyber-divider-soft">
             {#if creatingNew}
                 <div class="flex flex-col gap-2">
                     <div class="flex items-center gap-2">
@@ -194,25 +192,20 @@
                             bind:value={newName}
                             type="text"
                             placeholder="New tag name..."
-                            class="flex-1 bg-cyber-dark px-3 py-1.5 text-xs font-rajdhani font-semibold text-white focus:outline-none transition-colors"
-                            style="border: 1px solid rgba(252,238,10,0.15);"
-                            onfocus={(e) => e.currentTarget.style.borderColor = 'var(--cyber-yellow)'}
-                            onblur={(e) => e.currentTarget.style.borderColor = 'rgba(252,238,10,0.15)'}
+                            class="flex-1 bg-cyber-dark px-3 py-1.5 text-xs font-rajdhani font-semibold text-white focus:outline-none border cyber-input"
                             onkeydown={(e) => { if (e.key === 'Enter') createTag(); if (e.key === 'Escape') creatingNew = false; }}
                         />
                     </div>
                     <div class="flex gap-2">
                         <button
-                            class="flex-1 py-1.5 text-xs font-rajdhani font-bold uppercase tracking-wider clip-cyber-sm disabled:opacity-50 cyber-hover-fill-yellow"
-                            style="border: 1px solid;"
+                            class="flex-1 py-1.5 text-xs font-rajdhani font-bold uppercase tracking-wider clip-cyber-sm disabled:opacity-50 border cyber-hover-fill-yellow"
                             onclick={createTag}
                             disabled={savingNew}
                         >
                             {savingNew ? 'Creating...' : 'Create Tag'}
                         </button>
                         <button
-                            class="px-3 py-1.5 text-xs font-rajdhani font-semibold uppercase cyber-hover-yellow"
-                            style="border: 1px solid;"
+                            class="px-3 py-1.5 text-xs font-rajdhani font-semibold uppercase border cyber-hover-yellow"
                             onclick={() => (creatingNew = false)}
                         >
                             Cancel
@@ -221,8 +214,7 @@
                 </div>
             {:else}
                 <button
-                    class="w-full py-2 text-xs font-rajdhani font-semibold uppercase tracking-wider flex items-center justify-center gap-2 cyber-hover-add"
-                    style="border: 1px dashed;"
+                    class="w-full py-2 text-xs font-rajdhani font-semibold uppercase tracking-wider flex items-center justify-center gap-2 border border-dashed cyber-hover-add"
                     onclick={() => (creatingNew = true)}
                 >
                     <span>+</span> Add New Tag

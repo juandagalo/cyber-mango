@@ -58,32 +58,26 @@
 
 <div class="flex-shrink-0 w-[280px] self-start">
     {#if adding}
-        <div class="p-3 flex flex-col gap-2 clip-cyber-sm"
-             style="background: var(--bg-surface); border: 1px solid rgba(252,238,10,0.15);">
+        <div class="p-3 flex flex-col gap-2 clip-cyber-sm bg-cyber-surface-token cyber-border-base">
             <input
                 bind:this={inputEl}
                 bind:value={inputValue}
                 type="text"
                 placeholder="Column name..."
                 disabled={loading}
-                class="w-full bg-transparent px-3 py-1.5 text-xs font-rajdhani font-semibold text-white uppercase tracking-wider focus:outline-none transition-colors"
-                style="border: 1px solid rgba(252,238,10,0.15);"
-                onfocus={(e) => e.currentTarget.style.borderColor = 'var(--cyber-yellow)'}
-                onblur={(e) => e.currentTarget.style.borderColor = 'rgba(252,238,10,0.15)'}
+                class="w-full bg-transparent px-3 py-1.5 text-xs font-rajdhani font-semibold text-white uppercase tracking-wider focus:outline-none border cyber-input"
                 onkeydown={handleKeydown}
             />
             <div class="flex gap-2">
                 <button
-                    class="flex-1 py-1.5 text-xs font-rajdhani font-bold uppercase tracking-wider clip-cyber-sm cyber-hover-fill-yellow"
-                    style="border: 1px solid;"
+                    class="flex-1 py-1.5 text-xs font-rajdhani font-bold uppercase tracking-wider clip-cyber-sm border cyber-hover-fill-yellow"
                     onclick={createColumn}
                     disabled={loading}
                 >
                     {loading ? 'Creating...' : 'Add'}
                 </button>
                 <button
-                    class="flex-1 py-1.5 text-xs font-rajdhani font-semibold uppercase tracking-wider cyber-hover-cancel"
-                    style="border: 1px solid;"
+                    class="flex-1 py-1.5 text-xs font-rajdhani font-semibold uppercase tracking-wider border cyber-hover-cancel"
                     onclick={cancel}
                     disabled={loading}
                 >
@@ -93,8 +87,7 @@
         </div>
     {:else}
         <button
-            class="w-full py-3 px-4 text-xs font-rajdhani font-semibold uppercase tracking-[0.1em] flex items-center gap-2 justify-center cyber-hover-add"
-            style="border: 1px dashed;"
+            class="w-full py-3 px-4 text-xs font-rajdhani font-semibold uppercase tracking-[0.1em] flex items-center gap-2 justify-center border border-dashed cyber-hover-add"
             onclick={startAdding}
         >
             <span class="text-base leading-none">+</span>

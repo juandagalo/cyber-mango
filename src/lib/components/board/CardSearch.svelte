@@ -65,7 +65,8 @@
     const isOpen = $derived(query.trim().length > 0);
 
     $effect(() => {
-        const _len = results.length;
+        // Read results.length to declare the dependency, then reset highlight index
+        results.length;
         untrack(() => { highlightedIndex = -1; });
     });
 
@@ -181,23 +182,19 @@
     {#if !expanded}
         <!-- Collapsed: search trigger button -->
         <button
-            class="clip-cyber-xs group flex items-center gap-2 px-3 py-1.5 relative cyber-hover-search-trigger"
-            style="border: 1px solid;"
+            class="clip-cyber-xs group flex items-center gap-2 px-3 py-1.5 relative border cyber-hover-search-trigger"
             onclick={openSearch}
         >
             <!-- Corner cuts -->
-            <span class="absolute top-0 left-0 w-1.5 h-1.5 pointer-events-none"
-                  style="border-top: 1px solid var(--cyber-cyan); border-left: 1px solid var(--cyber-cyan); opacity: 0.5;"></span>
-            <span class="absolute bottom-0 right-0 w-1.5 h-1.5 pointer-events-none"
-                  style="border-bottom: 1px solid var(--cyber-cyan); border-right: 1px solid var(--cyber-cyan); opacity: 0.5;"></span>
+            <span class="absolute top-0 left-0 w-1.5 h-1.5 pointer-events-none search-corner-tl"></span>
+            <span class="absolute bottom-0 right-0 w-1.5 h-1.5 pointer-events-none search-corner-br"></span>
 
             <svg width="11" height="11" viewBox="0 0 12 12" fill="none" class="flex-shrink-0">
                 <circle cx="5" cy="5" r="3.5" stroke="currentColor" stroke-width="1.2"/>
                 <line x1="7.9" y1="7.9" x2="11" y2="11" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
             </svg>
             <span class="text-[10px] font-rajdhani font-semibold uppercase tracking-[0.12em]">Search</span>
-            <span class="text-[9px] font-mono px-1 py-px ml-1"
-                  style="color: rgba(0,255,255,0.3); border: 1px solid rgba(0,255,255,0.12);">
+            <span class="text-[9px] font-mono px-1 py-px ml-1 search-kbd">
                 ^K
             </span>
         </button>
@@ -212,21 +209,16 @@
                 <span class="search-scanline"></span>
             {/if}
 
-            <div class="relative flex items-center"
-                 style="border: 1px solid rgba(0,255,255,0.35); background: rgba(0,0,0,0.5);">
+            <div class="relative flex items-center search-input-wrapper">
 
                 <!-- Corner brackets -->
-                <span class="absolute left-0 top-0 w-2 h-2 pointer-events-none"
-                      style="border-top: 1px solid var(--cyber-cyan); border-left: 1px solid var(--cyber-cyan);"></span>
-                <span class="absolute right-0 top-0 w-2 h-2 pointer-events-none"
-                      style="border-top: 1px solid var(--cyber-cyan); border-right: 1px solid var(--cyber-cyan);"></span>
-                <span class="absolute left-0 bottom-0 w-2 h-2 pointer-events-none"
-                      style="border-bottom: 1px solid var(--cyber-cyan); border-left: 1px solid var(--cyber-cyan);"></span>
-                <span class="absolute right-0 bottom-0 w-2 h-2 pointer-events-none"
-                      style="border-bottom: 1px solid var(--cyber-cyan); border-right: 1px solid var(--cyber-cyan);"></span>
+                <span class="absolute left-0 top-0 w-2 h-2 pointer-events-none search-corner-tl-full"></span>
+                <span class="absolute right-0 top-0 w-2 h-2 pointer-events-none search-corner-tr-full"></span>
+                <span class="absolute left-0 bottom-0 w-2 h-2 pointer-events-none search-corner-bl-full"></span>
+                <span class="absolute right-0 bottom-0 w-2 h-2 pointer-events-none search-corner-br-full"></span>
 
                 <!-- Magnifying glass -->
-                <span class="pl-2.5 pr-1 flex-shrink-0" style="color: var(--cyber-cyan); opacity: 0.6;" aria-hidden="true">
+                <span class="pl-2.5 pr-1 flex-shrink-0 text-cyber-cyan opacity-60" aria-hidden="true">
                     <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
                         <circle cx="5" cy="5" r="3.5" stroke="currentColor" stroke-width="1.2"/>
                         <line x1="7.9" y1="7.9" x2="11" y2="11" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
@@ -244,8 +236,7 @@
                     aria-controls="card-search-listbox"
                     aria-activedescendant={activeDescendant}
                     aria-label="Search cards"
-                    class="flex-1 bg-transparent text-xs font-mono text-white py-1.5 px-1 focus:outline-none placeholder:text-[var(--text-muted)]"
-                    style="min-width: 0;"
+                    class="flex-1 bg-transparent text-xs font-mono text-white py-1.5 px-1 focus:outline-none placeholder:text-[var(--text-muted)] min-w-0"
                     onkeydown={handleKeydown}
                     onblur={handleBlur}
                 />
@@ -261,8 +252,7 @@
                     </button>
                 {:else}
                     <button
-                        class="flex-shrink-0 px-1.5 py-0.5 mr-1 text-[9px] font-mono cyber-hover-esc"
-                        style="border: 1px solid;"
+                        class="flex-shrink-0 px-1.5 py-0.5 mr-1 text-[9px] font-mono border cyber-hover-esc"
                         onclick={closeSearch}
                         aria-label="Close search"
                         tabindex="-1"
@@ -279,18 +269,15 @@
                 id="card-search-listbox"
                 role="listbox"
                 aria-label="Search results"
-                class="absolute top-full left-0 right-0 z-30 overflow-hidden mt-0.5"
-                style="background: var(--bg-card); border: 1px solid rgba(0,255,255,0.2); box-shadow: 0 8px 24px rgba(0,0,0,0.8), 0 0 12px rgba(0,255,255,0.06);"
+                class="absolute top-full left-0 right-0 z-30 overflow-hidden mt-0.5 cyber-search-results"
             >
                 {#if results.length === 0}
-                    <div class="px-3 py-2 text-[10px] font-mono glitch-text"
-                         data-text="NO MATCH FOUND"
-                         style="color: rgba(0,255,255,0.35);">
+                    <div class="px-3 py-2 text-[10px] font-mono glitch-text search-no-match"
+                         data-text="NO MATCH FOUND">
                         NO MATCH FOUND
                     </div>
                 {:else}
                     {#each results as result, i (result.id)}
-                        <!-- svelte-ignore a11y_click_events_have_key_events -->
                         <div
                             id="search-result-{i}"
                             role="option"
@@ -300,10 +287,10 @@
                             style="background: {highlightedIndex === i ? 'rgba(0,255,255,0.05)' : 'transparent'};"
                             onmouseenter={() => { highlightedIndex = i; }}
                             onclick={() => selectResult(result)}
+                            onkeydown={(e) => e.key === 'Enter' && selectResult(result)}
                         >
                             {#if highlightedIndex === i}
-                                <span class="absolute left-0 top-0 bottom-0 w-[2px]"
-                                      style="background: var(--cyber-cyan);"></span>
+                                <span class="absolute left-0 top-0 bottom-0 w-[2px] bg-cyber-cyan"></span>
                             {/if}
 
                             <span
@@ -316,8 +303,7 @@
                                 {result.title}
                             </span>
 
-                            <span class="flex-shrink-0 text-[9px] font-mono"
-                                  style="color: var(--text-muted);">
+                            <span class="flex-shrink-0 text-[9px] font-mono text-cyber-muted">
                                 {result.id.slice(0, 8)} &middot; {result.columnName}
                             </span>
                         </div>

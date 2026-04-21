@@ -19,7 +19,7 @@
             out:fly={{ x: 50, duration: 150 }}
         >
             <span class="text-lg font-bold flex-shrink-0" style="color: {style.border};">{style.icon}</span>
-            <p class="text-sm font-rajdhani flex-1" style="color: var(--text-primary);">{toast.message}</p>
+            <p class="text-sm font-rajdhani flex-1 text-cyber-primary">{toast.message}</p>
             <button
                 class="flex-shrink-0 ml-2 cyber-hover-white"
                 onclick={() => removeToast(toast.id)}

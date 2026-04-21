@@ -143,8 +143,8 @@
 <div class="flex flex-col h-full overflow-hidden">
 
 <!-- Board sub-header: 3-column layout (info | search | buttons) -->
-<div class="grid px-5 py-2 flex-shrink-0 items-center gap-3"
-     style="grid-template-columns: 1fr auto 1fr; background: rgba(252,238,10,0.02); border-bottom: 1px solid rgba(252,238,10,0.08);">
+<div class="grid px-5 py-2 flex-shrink-0 items-center gap-3 board-subheader"
+     style="grid-template-columns: 1fr auto 1fr;">
 
     <!-- Left: board info -->
     <div class="flex items-center gap-3 min-w-0">
@@ -152,12 +152,10 @@
             // {board.name}
         </span>
         <div class="h-3 w-px flex-shrink-0 bg-[rgba(252,238,10,0.15)]"></div>
-        <span class="text-[10px] font-mono text-[var(--text-muted)] px-1.5 py-0.5 flex-shrink-0"
-              style="border: 1px solid rgba(252,238,10,0.1);">
+        <span class="text-[10px] font-mono text-[var(--text-muted)] px-1.5 py-0.5 flex-shrink-0 cyber-border-dim">
             [{totalCards}] CARDS
         </span>
-        <span class="text-[10px] font-mono text-[var(--text-muted)] px-1.5 py-0.5 flex-shrink-0"
-              style="border: 1px solid rgba(252,238,10,0.1);">
+        <span class="text-[10px] font-mono text-[var(--text-muted)] px-1.5 py-0.5 flex-shrink-0 cyber-border-dim">
             [{columns.length}] COLS
         </span>
     </div>
@@ -174,15 +172,13 @@
     <!-- Right: action buttons -->
     <div class="flex items-center gap-2 justify-end">
         <button
-            class="text-xs font-rajdhani font-semibold uppercase tracking-[0.1em] px-4 py-1.5 clip-cyber-sm cyber-hover-cyan"
-            style="border: 1px solid;"
+            class="text-xs font-rajdhani font-semibold uppercase tracking-[0.1em] px-4 py-1.5 clip-cyber-sm border cyber-hover-cyan"
             onclick={() => (showPhaseManager = true)}
         >
             Manage Phases
         </button>
         <button
-            class="text-xs font-rajdhani font-semibold uppercase tracking-[0.1em] px-4 py-1.5 clip-cyber-sm cyber-hover-yellow"
-            style="border: 1px solid;"
+            class="text-xs font-rajdhani font-semibold uppercase tracking-[0.1em] px-4 py-1.5 clip-cyber-sm border cyber-hover-yellow"
             onclick={() => (showTagManager = true)}
         >
             Manage Tags

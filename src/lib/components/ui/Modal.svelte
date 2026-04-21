@@ -11,6 +11,14 @@
 
     let visible = $state(false);
     let closing = $state(false);
+    let modalEl: HTMLDivElement | undefined = $state();
+
+    const FOCUSABLE_SELECTOR = 'a[href], button:not([disabled]), textarea:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])';
+
+    function getFocusable(): HTMLElement[] {
+        if (!modalEl) return [];
+        return Array.from(modalEl.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR));
+    }
 
     function close() {
         closing = true;
@@ -20,41 +28,67 @@
     }
 
     function handleKeydown(e: KeyboardEvent) {
-        if (e.key === 'Escape') close();
+        if (e.key === 'Escape') {
+            close();
+            return;
+        }
+        if (e.key === 'Tab') {
+            const focusable = getFocusable();
+            if (focusable.length === 0) return;
+            const first = focusable[0];
+            const last = focusable[focusable.length - 1];
+            if (e.shiftKey) {
+                if (document.activeElement === first) {
+                    e.preventDefault();
+                    last.focus();
+                }
+            } else {
+                if (document.activeElement === last) {
+                    e.preventDefault();
+                    first.focus();
+                }
+            }
+        }
     }
 
     function handleBackdropClick(e: MouseEvent) {
         if (e.target === e.currentTarget) close();
     }
 
+    let previouslyFocused: HTMLElement | null = null;
+
     onMount(() => {
-        // Trigger enter animation on next frame
-        requestAnimationFrame(() => { visible = true; });
+        previouslyFocused = document.activeElement as HTMLElement | null;
+        // Trigger enter animation on next frame, then focus first focusable element
+        requestAnimationFrame(() => {
+            visible = true;
+            const focusable = getFocusable();
+            if (focusable.length > 0) focusable[0].focus();
+        });
         window.addEventListener('keydown', handleKeydown);
     });
 
     onDestroy(() => {
         window.removeEventListener('keydown', handleKeydown);
+        previouslyFocused?.focus();
     });
 </script>
 
 <!-- svelte-ignore a11y_click_events_have_key_events -->
 <div
-    class="fixed inset-0 z-50 flex items-center justify-center p-4"
-    style="background: rgba(0,0,0,0.8);
-           animation: {closing ? 'cyber-backdrop-out' : 'cyber-backdrop-in'} {closing ? '0.25s' : '0.35s'} ease-out forwards;"
+    class="fixed inset-0 z-50 flex items-center justify-center p-4 cyber-backdrop"
+    class:cyber-backdrop-enter={!closing}
+    class:cyber-backdrop-exit={closing}
     onclick={handleBackdropClick}
     role="presentation"
 >
     <div
-        class="relative w-full {maxWidth} overflow-hidden"
-        style="background: var(--bg-surface);
-               border: 1px solid rgba(252,238,10,0.2);
-               box-shadow: 0 0 40px rgba(252,238,10,0.08), 0 0 80px rgba(0,0,0,0.8), inset 0 1px 0 rgba(252,238,10,0.05);
-               animation: {closing ? 'cyber-modal-out 0.3s ease-in forwards' : 'cyber-modal-in 0.4s ease-out forwards'},
-                          {closing ? 'none' : 'border-flash-in 0.6s ease-out'};"
+        bind:this={modalEl}
+        class="relative w-full {maxWidth} overflow-hidden cyber-modal-panel"
+        class:cyber-modal-enter={!closing}
+        class:cyber-modal-exit={closing}
     >
-        <!-- Traveling border lights — energy flowing around the perimeter -->
+        <!-- Traveling border lights - energy flowing around the perimeter -->
         <div class="border-line-travel border-line-top"></div>
         <div class="border-line-travel border-line-right"></div>
         <div class="border-line-travel border-line-bottom"></div>
@@ -62,20 +96,14 @@
 
         <!-- One-shot scan line on open -->
         {#if visible && !closing}
-            <div class="absolute left-0 w-full h-[2px] pointer-events-none z-20"
-                 style="background: linear-gradient(90deg, transparent 10%, rgba(252,238,10,0.4) 50%, transparent 90%);
-                        box-shadow: 0 0 8px rgba(252,238,10,0.2);
-                        animation: modal-scan-once 0.6s ease-out 0.3s forwards;
-                        opacity: 0;">
-            </div>
+            <div class="absolute left-0 w-full h-[2px] pointer-events-none z-20 modal-scan-line"></div>
         {/if}
 
         <!-- Corner brackets for the modal -->
         <div class="corner-brackets absolute inset-3 pointer-events-none z-10"></div>
 
         {#if title}
-            <div class="flex items-center justify-between px-6 py-3"
-                 style="border-bottom: 1px solid rgba(252,238,10,0.1); background: rgba(252,238,10,0.02);">
+            <div class="flex items-center justify-between px-6 py-3 modal-header">
                 <h2 class="font-rajdhani font-bold text-white uppercase tracking-[0.12em] text-sm">// {title}</h2>
                 <button
                     class="text-xl leading-none cyber-hover-muted"

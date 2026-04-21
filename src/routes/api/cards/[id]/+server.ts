@@ -17,6 +17,12 @@ export const PATCH: RequestHandler = async ({ params, request }) => {
     try {
         const services = getServices();
         const body = await request.json();
+        if (body.title === undefined && body.description === undefined && body.priority === undefined && body.phaseId === undefined) {
+            return json({ error: 'at least one field is required: title, description, priority, phaseId' }, { status: 400 });
+        }
+        if (body.title !== undefined && typeof body.title !== 'string') {
+            return json({ error: 'title must be a string' }, { status: 400 });
+        }
         const card = services.cards.update(params.id as string, {
             title: body.title,
             description: body.description,

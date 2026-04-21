@@ -17,6 +17,9 @@ export const POST: RequestHandler = async ({ request }) => {
     try {
         const services = getServices();
         const body = await request.json();
+        if (!body.name || typeof body.name !== 'string') {
+            return json({ error: 'name is required and must be a string' }, { status: 400 });
+        }
         const board = services.boards.createBoard({ name: body.name, description: body.description });
         return json({ board }, { status: 201 });
     } catch (err) {

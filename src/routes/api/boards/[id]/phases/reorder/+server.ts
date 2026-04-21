@@ -7,6 +7,9 @@ export const POST: RequestHandler = async ({ params, request }) => {
     try {
         const services = getServices();
         const body = await request.json();
+        if (!Array.isArray(body.orderedIds)) {
+            return json({ error: 'orderedIds is required and must be an array' }, { status: 400 });
+        }
         const phases = services.phases.reorder(params.id as string, body.orderedIds);
         return json({ phases });
     } catch (err) {

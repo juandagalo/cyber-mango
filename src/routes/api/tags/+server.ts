@@ -22,6 +22,15 @@ export const POST: RequestHandler = async ({ request }) => {
     try {
         const services = getServices();
         const body = await request.json();
+        if (!body.boardId || typeof body.boardId !== 'string') {
+            return json({ error: 'boardId is required and must be a string' }, { status: 400 });
+        }
+        if (!body.name || typeof body.name !== 'string') {
+            return json({ error: 'name is required and must be a string' }, { status: 400 });
+        }
+        if (!body.color || typeof body.color !== 'string') {
+            return json({ error: 'color is required and must be a string' }, { status: 400 });
+        }
         const tag = services.tags.create({
             boardId: body.boardId,
             name: body.name,

@@ -359,7 +359,7 @@
         onfinalize={handleDndFinalize}
     >
         {#each items as card (card.id)}
-            <div class="card-wrapper">
+            <div class="card-wrapper" data-card-id={card.id}>
                 <Card {card} onopen={openCard} />
             </div>
         {/each}

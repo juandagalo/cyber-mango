@@ -6,6 +6,7 @@
     import CardDetail from '$lib/components/card/CardDetail.svelte';
     import TagManager from '$lib/components/tag/TagManager.svelte';
     import PhaseManager from '$lib/components/tag/PhaseManager.svelte';
+    import CardSearch from './CardSearch.svelte';
     import { boardStore } from '$lib/stores/board.js';
     import { addToast } from '$lib/stores/toast.js';
 
@@ -21,6 +22,12 @@
     let selectedCard = $state<CardWithTags | null>(null);
     let showTagManager = $state(false);
     let showPhaseManager = $state(false);
+
+    // Scroll container ref for horizontal scrolling
+    let scrollContainer = $state<HTMLElement | undefined>(undefined);
+
+    // Whether any modal is open (passed to CardSearch to disable Ctrl+K)
+    const modalOpen = $derived(selectedCard !== null || showTagManager || showPhaseManager);
 
     const totalCards = $derived(board.columns.reduce((sum, col) => sum + col.cards.length, 0));
 
@@ -38,12 +45,16 @@
         }
     }
 
+    let isDndActive = $state(false);
+
     function handleColumnConsider(e: CustomEvent<{ items: ColumnWithCards[] }>) {
         columns = e.detail.items;
+        isDndActive = true;
     }
 
     async function handleColumnFinalize(e: CustomEvent<{ items: ColumnWithCards[]; info: { id: string } }>) {
         columns = e.detail.items;
+        isDndActive = false;
 
         const movedId = e.detail.info.id;
         const newIdx = columns.findIndex(c => c.id === movedId);
@@ -85,29 +96,83 @@
         selectedCard = null;
         refreshBoard();
     }
+
+    async function scrollToAndOpenCard(card: CardWithTags) {
+        const cardExists = columns.some(col => col.cards.some(c => c.id === card.id));
+        if (!cardExists) return;
+
+        if (!scrollContainer || isDndActive) {
+            selectedCard = card;
+            return;
+        }
+
+        const colEl = scrollContainer.querySelector<HTMLElement>(`[data-column-id="${card.columnId}"]`);
+        if (colEl) {
+            colEl.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+
+            await new Promise<void>((resolve) => {
+                let settled = false;
+                const timeout = setTimeout(() => {
+                    if (!settled) { settled = true; resolve(); }
+                }, 800);
+                scrollContainer!.addEventListener('scrollend', function onScrollEnd() {
+                    if (!settled) {
+                        settled = true;
+                        clearTimeout(timeout);
+                        scrollContainer!.removeEventListener('scrollend', onScrollEnd);
+                        resolve();
+                    }
+                }, { once: true });
+            });
+        }
+
+        const cardEl = scrollContainer.querySelector<HTMLElement>(`[data-card-id="${card.id}"]`);
+        if (cardEl) {
+            cardEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            await new Promise<void>((resolve) => setTimeout(resolve, 300));
+
+            cardEl.classList.add('card-search-highlight');
+            setTimeout(() => cardEl.classList.remove('card-search-highlight'), 1100);
+        }
+
+        selectedCard = card;
+    }
 </script>
 
 <!-- Board wrapper -->
 <div class="flex flex-col h-full overflow-hidden">
 
-<!-- Board sub-header -->
-<div class="flex items-center justify-between px-5 py-2 flex-shrink-0"
-     style="background: rgba(252,238,10,0.02); border-bottom: 1px solid rgba(252,238,10,0.08);">
-    <div class="flex items-center gap-3">
-        <span class="font-rajdhani font-bold text-cyber-yellow text-sm uppercase tracking-[0.15em]">
+<!-- Board sub-header: 3-column layout (info | search | buttons) -->
+<div class="grid px-5 py-2 flex-shrink-0 items-center gap-3"
+     style="grid-template-columns: 1fr auto 1fr; background: rgba(252,238,10,0.02); border-bottom: 1px solid rgba(252,238,10,0.08);">
+
+    <!-- Left: board info -->
+    <div class="flex items-center gap-3 min-w-0">
+        <span class="font-rajdhani font-bold text-cyber-yellow text-sm uppercase tracking-[0.15em] truncate">
             // {board.name}
         </span>
-        <div class="h-3 w-px bg-[rgba(252,238,10,0.15)]"></div>
-        <span class="text-[10px] font-mono text-[var(--text-muted)] px-1.5 py-0.5"
+        <div class="h-3 w-px flex-shrink-0 bg-[rgba(252,238,10,0.15)]"></div>
+        <span class="text-[10px] font-mono text-[var(--text-muted)] px-1.5 py-0.5 flex-shrink-0"
               style="border: 1px solid rgba(252,238,10,0.1);">
             [{totalCards}] CARDS
         </span>
-        <span class="text-[10px] font-mono text-[var(--text-muted)] px-1.5 py-0.5"
+        <span class="text-[10px] font-mono text-[var(--text-muted)] px-1.5 py-0.5 flex-shrink-0"
               style="border: 1px solid rgba(252,238,10,0.1);">
             [{columns.length}] COLS
         </span>
     </div>
-    <div class="flex items-center gap-2">
+
+    <!-- Center: search -->
+    <div class="flex justify-center">
+        <CardSearch
+            {columns}
+            {modalOpen}
+            onfound={scrollToAndOpenCard}
+        />
+    </div>
+
+    <!-- Right: action buttons -->
+    <div class="flex items-center gap-2 justify-end">
         <button
             class="text-xs font-rajdhani font-semibold uppercase tracking-[0.1em] px-4 py-1.5 transition-all clip-cyber-sm"
             style="border: 1px solid rgba(252,238,10,0.2); color: var(--text-muted); background: transparent;"
@@ -130,7 +195,7 @@
 </div>
 
 <!-- Board columns scroll area -->
-<div class="flex-1 min-h-0 overflow-x-auto overflow-y-hidden" style="max-height: calc(100% - 1px);">
+<div bind:this={scrollContainer} class="flex-1 min-h-0 overflow-x-auto overflow-y-hidden" style="max-height: calc(100% - 1px);">
     <div class="flex gap-3 p-4 h-full items-start">
 
         <!-- DnD columns container -->
@@ -145,7 +210,7 @@
             onfinalize={handleColumnFinalize}
         >
             {#each columns as col (col.id)}
-                <div class="h-full flex-shrink-0">
+                <div class="h-full flex-shrink-0" data-column-id={col.id}>
                     <Column
                         column={col}
                         onrefresh={refreshBoard}

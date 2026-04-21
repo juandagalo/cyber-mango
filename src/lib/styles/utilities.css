@@ -77,6 +77,18 @@
 }
 
 /* Scan lines — subtle CRT overlay */
+/* Clip-path — search trigger button (6px corners) */
+.clip-cyber-xs {
+  clip-path: polygon(
+    0 0,
+    calc(100% - 6px) 0,
+    100% 6px,
+    100% 100%,
+    6px 100%,
+    0 calc(100% - 6px)
+  );
+}
+
 .scan-lines::after {
   content: '';
   position: absolute;

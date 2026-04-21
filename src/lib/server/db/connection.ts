@@ -30,6 +30,11 @@ export function getDb() {
 	return db;
 }
 
+export function getRawDb() {
+	getDb();
+	return sqlite!;
+}
+
 export function closeDb() {
 	if (sqlite) {
 		sqlite.close();

@@ -3,15 +3,7 @@
     import { boardStore } from '$lib/stores/board.js';
     import Board from '$lib/components/board/Board.svelte';
     import Toast from '$lib/components/ui/Toast.svelte';
-    import { onMount } from 'svelte';
-
     let { data }: { data: PageData } = $props();
-
-    onMount(() => {
-        if (data.board) {
-            boardStore.set(data.board);
-        }
-    });
 
     $effect(() => {
         if (data.board) {

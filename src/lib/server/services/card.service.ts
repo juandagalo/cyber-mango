@@ -19,6 +19,11 @@ export class CardService {
             throw new NotFoundError('Column', input.columnId);
         }
 
+        const validPriorities = ['low', 'medium', 'high', 'critical'];
+        if (input.priority && !validPriorities.includes(input.priority)) {
+            throw new ValidationError('Invalid priority value');
+        }
+
         if (input.phaseId) {
             const phase = this.db.select({ id: phases.id }).from(phases).where(eq(phases.id, input.phaseId)).get();
             if (!phase) {
@@ -106,6 +111,11 @@ export class CardService {
 
         if (input.title !== undefined && input.title.trim().length === 0) {
             throw new ValidationError('Card title cannot be empty');
+        }
+
+        const validPriorities = ['low', 'medium', 'high', 'critical'];
+        if (input.priority !== undefined && !validPriorities.includes(input.priority)) {
+            throw new ValidationError('Invalid priority value');
         }
 
         if (input.phaseId !== undefined && input.phaseId !== null) {

@@ -35,7 +35,6 @@
     }
 </script>
 
-<!-- svelte-ignore a11y_click_events_have_key_events a11y_no_static_element_interactions -->
 <div
     class="cursor-pointer select-none transition-all duration-150 px-3 py-2.5 corner-brackets hover-sweep"
     style="

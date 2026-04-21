@@ -15,6 +15,13 @@
       "when": 1776299103511,
       "tag": "0001_right_polaris",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1776799182756,
+      "tag": "0002_old_vengeance",
+      "breakpoints": true
     }
   ]
 }

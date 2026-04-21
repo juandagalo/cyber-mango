@@ -1,4 +1,4 @@
-import { sqliteTable, text, integer, real, index, uniqueIndex, primaryKey } from 'drizzle-orm/sqlite-core';
+import { sqliteTable, text, integer, real, index, uniqueIndex, primaryKey, type AnySQLiteColumn } from 'drizzle-orm/sqlite-core';
 import { sql } from 'drizzle-orm';
 
 export const boards = sqliteTable('boards', {
@@ -30,7 +30,7 @@ export const cards = sqliteTable('cards', {
 	priority: text('priority', { enum: ['low', 'medium', 'high', 'critical'] }).default('medium'),
 	position: real('position').notNull(),
 	phaseId: text('phase_id').references(() => phases.id, { onDelete: 'set null' }),
-	parentCardId: text('parent_card_id'),
+	parentCardId: text('parent_card_id').references((): AnySQLiteColumn => cards.id, { onDelete: 'set null' }),
 	dueDate: text('due_date'),
 	createdAt: text('created_at').notNull().default(sql`(datetime('now'))`),
 	updatedAt: text('updated_at').notNull().default(sql`(datetime('now'))`)

@@ -1,7 +1,8 @@
 <script lang="ts">
     import { tick, untrack } from 'svelte';
     import { marked } from 'marked';
-    import type { CardWithTags, Priority, Phase, Tag } from '$lib/types/board.js';
+    import DOMPurify from 'dompurify';
+    import type { CardWithTags, Priority, Phase, Tag, ColumnWithCards } from '$lib/types/board.js';
     import Modal from '$lib/components/ui/Modal.svelte';
     import ConfirmDialog from '$lib/components/ui/ConfirmDialog.svelte';
     import PriorityBadge from './PriorityBadge.svelte';
@@ -44,7 +45,7 @@
 
     // Markdown rendering
     marked.setOptions({ breaks: true, gfm: true });
-    const renderedDescription = $derived(marked.parse(description || '') as string);
+    const renderedDescription = $derived(DOMPurify.sanitize(marked.parse(description || '') as string));
 
     const priorities: Priority[] = ['critical', 'high', 'medium', 'low'];
     const priorityColors: Record<Priority, string> = {
@@ -199,8 +200,8 @@
             const res = await fetch(`/api/boards/${boardId}`);
             if (res.ok) {
                 const data = await res.json();
-                const allCards = data.board.columns.flatMap((c: any) => c.cards);
-                const updatedCard = allCards.find((c: any) => c.id === card.id);
+                const allCards = (data.board.columns as ColumnWithCards[]).flatMap((c) => c.cards);
+                const updatedCard = allCards.find((c) => c.id === card.id);
                 if (updatedCard) {
                     tags = updatedCard.tags;
                     assignedTagIds = updatedCard.tags.map((t: Tag) => t.id);
@@ -248,9 +249,8 @@
                         <label for="card-desc" class="text-[10px] font-rajdhani font-semibold uppercase tracking-[0.12em]" style="color: var(--text-muted);">// Description</label>
                         <button
                             class="text-[10px] font-rajdhani font-bold uppercase tracking-wider px-2 py-0.5 transition-colors"
-                            style="color: {editingDescription ? 'var(--cyber-cyan)' : 'var(--text-muted)'}; border: 1px solid {editingDescription ? 'rgba(2,215,242,0.3)' : 'transparent'}; background: {editingDescription ? 'rgba(2,215,242,0.05)' : 'transparent'};"
-                            onmouseenter={(e) => { if (!editingDescription) e.currentTarget.style.color = 'var(--cyber-yellow)'; }}
-                            onmouseleave={(e) => { if (!editingDescription) e.currentTarget.style.color = 'var(--text-muted)'; }}
+                            class:cyber-hover-muted={!editingDescription}
+                            style="color: {editingDescription ? 'var(--cyber-cyan)' : ''}; border: 1px solid {editingDescription ? 'rgba(2,215,242,0.3)' : 'transparent'}; background: {editingDescription ? 'rgba(2,215,242,0.05)' : 'transparent'};"
                             onclick={() => { editingDescription = !editingDescription; }}
                         >
                             {editingDescription ? 'Preview' : 'Edit'}
@@ -328,10 +328,8 @@
                         {/each}
                         <div class="relative">
                             <button
-                                class="px-2 py-0.5 text-[10px] font-rajdhani font-semibold uppercase transition-all"
-                                style="border: 1px solid rgba(252,238,10,0.15); color: var(--text-muted);"
-                                onmouseenter={(e) => { e.currentTarget.style.color = 'var(--cyber-yellow)'; e.currentTarget.style.borderColor = 'var(--cyber-yellow)'; }}
-                                onmouseleave={(e) => { e.currentTarget.style.color = 'var(--text-muted)'; e.currentTarget.style.borderColor = 'rgba(252,238,10,0.15)'; }}
+                                class="px-2 py-0.5 text-[10px] font-rajdhani font-semibold uppercase cyber-hover-cancel"
+                                style="border: 1px solid;"
                                 onclick={(e: MouseEvent) => { e.stopPropagation(); showTagPicker = !showTagPicker; }}
                             >
                                 + Tag
@@ -380,10 +378,8 @@
                 <!-- Delete -->
                 <div class="pt-3 mt-auto" style="border-top: 1px solid rgba(197,0,60,0.15);">
                     <button
-                        class="w-full px-4 py-2 text-xs font-rajdhani font-bold uppercase tracking-wider transition-all clip-cyber-sm"
-                        style="border: 1px solid var(--cyber-red-bright); color: var(--cyber-red-bright);"
-                        onmouseenter={(e) => { e.currentTarget.style.background = 'var(--cyber-red-bright)'; e.currentTarget.style.color = '#0D0D12'; }}
-                        onmouseleave={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'var(--cyber-red-bright)'; }}
+                        class="w-full px-4 py-2 text-xs font-rajdhani font-bold uppercase tracking-wider clip-cyber-sm cyber-hover-fill-red"
+                        style="border: 1px solid;"
                         onclick={() => (showConfirmDelete = true)}
                     >
                         Delete Card

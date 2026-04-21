@@ -1,18 +1,12 @@
 <script lang="ts">
     import type { Tag } from '$lib/types/board.js';
+    import { hexToRgb } from '$lib/utils/color.js';
 
     let { tag, removable = false, onremove }: {
         tag: Tag;
         removable?: boolean;
         onremove?: (id: string) => void;
     } = $props();
-
-    function hexToRgb(hex: string): string {
-        const r = parseInt(hex.slice(1, 3), 16);
-        const g = parseInt(hex.slice(3, 5), 16);
-        const b = parseInt(hex.slice(5, 7), 16);
-        return `${r},${g},${b}`;
-    }
 
     const rgb = $derived(hexToRgb(tag.color.startsWith('#') ? tag.color : '#6366f1'));
 </script>

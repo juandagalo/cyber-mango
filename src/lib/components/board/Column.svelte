@@ -51,7 +51,7 @@
 
     async function handleDndFinalize(e: CustomEvent<{ items: CardWithTags[]; info: { id: string; source: string; trigger: string } }>) {
         const newItems = e.detail.items.filter(
-            (item: CardWithTags) => !(item as any)[SHADOW_ITEM_MARKER_PROPERTY_NAME]
+            (item: CardWithTags) => !(item as unknown as Record<string, unknown>)[SHADOW_ITEM_MARKER_PROPERTY_NAME]
         );
         items = newItems;
 
@@ -258,10 +258,7 @@
         <!-- Kebab menu -->
         <div class="relative">
             <button
-                class="w-6 h-6 flex items-center justify-center transition-colors"
-                style="color: var(--text-muted);"
-                onmouseenter={(e) => e.currentTarget.style.color = 'var(--cyber-yellow)'}
-                onmouseleave={(e) => e.currentTarget.style.color = 'var(--text-muted)'}
+                class="w-6 h-6 flex items-center justify-center cyber-hover-muted"
                 onclick={(e: MouseEvent) => { e.stopPropagation(); menuOpen = !menuOpen; }}
                 onkeydown={handleMenuKeydown}
                 title="Column options"
@@ -334,10 +331,8 @@
 
                     <div class="mt-1" style="border-top: 1px solid rgba(197,0,60,0.25);"></div>
                     <button
-                        class="w-full text-left px-3 py-2 text-xs font-rajdhani font-semibold uppercase tracking-wider transition-colors"
+                        class="w-full text-left px-3 py-2 text-xs font-rajdhani font-semibold uppercase tracking-wider cyber-hover-red"
                         style="color: var(--cyber-red-bright);"
-                        onmouseenter={(e) => e.currentTarget.style.background = 'rgba(197,0,60,0.08)'}
-                        onmouseleave={(e) => e.currentTarget.style.background = 'transparent'}
                         onclick={() => { showConfirmDelete = true; menuOpen = false; }}
                     >
                         Delete Column
@@ -380,11 +375,3 @@
     <div class="fixed inset-0 z-10" onclick={() => (menuOpen = false)} role="presentation"></div>
 {/if}
 
-<style>
-    /* DnD drag ghost styling */
-    :global([data-is-dnd-shadow-item]) .card-wrapper {
-        opacity: 0.4;
-        border: 1px dashed rgba(252, 238, 10, 0.4) !important;
-        box-shadow: 0 0 10px rgba(252, 238, 10, 0.15) !important;
-    }
-</style>

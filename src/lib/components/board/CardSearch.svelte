@@ -181,24 +181,8 @@
     {#if !expanded}
         <!-- Collapsed: search trigger button -->
         <button
-            class="clip-cyber-xs group flex items-center gap-2 px-3 py-1.5 transition-all duration-200 relative"
-            style="
-                border: 1px solid rgba(0,255,255,0.15);
-                background: rgba(0,255,255,0.03);
-                color: var(--text-muted);
-            "
-            onmouseenter={(e) => {
-                e.currentTarget.style.borderColor = 'rgba(0,255,255,0.4)';
-                e.currentTarget.style.background = 'rgba(0,255,255,0.06)';
-                e.currentTarget.style.color = 'var(--cyber-cyan)';
-                e.currentTarget.style.boxShadow = '0 0 12px rgba(0,255,255,0.1), inset 0 0 12px rgba(0,255,255,0.03)';
-            }}
-            onmouseleave={(e) => {
-                e.currentTarget.style.borderColor = 'rgba(0,255,255,0.15)';
-                e.currentTarget.style.background = 'rgba(0,255,255,0.03)';
-                e.currentTarget.style.color = 'var(--text-muted)';
-                e.currentTarget.style.boxShadow = 'none';
-            }}
+            class="clip-cyber-xs group flex items-center gap-2 px-3 py-1.5 relative cyber-hover-search-trigger"
+            style="border: 1px solid;"
             onclick={openSearch}
         >
             <!-- Corner cuts -->
@@ -268,10 +252,7 @@
 
                 {#if query.length > 0}
                     <button
-                        class="flex-shrink-0 px-2 py-1 text-[10px] font-mono transition-colors"
-                        style="color: rgba(0,255,255,0.5);"
-                        onmouseenter={(e) => e.currentTarget.style.color = 'var(--cyber-cyan)'}
-                        onmouseleave={(e) => e.currentTarget.style.color = 'rgba(0,255,255,0.5)'}
+                        class="flex-shrink-0 px-2 py-1 text-[10px] font-mono cyber-hover-text-cyan"
                         onclick={clearQuery}
                         aria-label="Clear search"
                         tabindex="-1"
@@ -280,10 +261,8 @@
                     </button>
                 {:else}
                     <button
-                        class="flex-shrink-0 px-1.5 py-0.5 mr-1 text-[9px] font-mono transition-colors"
-                        style="color: rgba(0,255,255,0.3); border: 1px solid rgba(0,255,255,0.12);"
-                        onmouseenter={(e) => { e.currentTarget.style.color = 'rgba(0,255,255,0.5)'; e.currentTarget.style.borderColor = 'rgba(0,255,255,0.25)'; }}
-                        onmouseleave={(e) => { e.currentTarget.style.color = 'rgba(0,255,255,0.3)'; e.currentTarget.style.borderColor = 'rgba(0,255,255,0.12)'; }}
+                        class="flex-shrink-0 px-1.5 py-0.5 mr-1 text-[9px] font-mono cyber-hover-esc"
+                        style="border: 1px solid;"
                         onclick={closeSearch}
                         aria-label="Close search"
                         tabindex="-1"

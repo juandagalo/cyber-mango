@@ -1,10 +1,11 @@
 <script lang="ts">
+    import type { CardWithTags } from '$lib/types/board.js';
     import { addCardToStore } from '$lib/stores/board.js';
     import { addToast } from '$lib/stores/toast.js';
 
     let { columnId, oncreated }: {
         columnId: string;
-        oncreated?: (card: any) => void;
+        oncreated?: (card: CardWithTags) => void;
     } = $props();
 
     let inputValue = $state('');

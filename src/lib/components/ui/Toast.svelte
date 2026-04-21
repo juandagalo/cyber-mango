@@ -21,10 +21,7 @@
             <span class="text-lg font-bold flex-shrink-0" style="color: {style.border};">{style.icon}</span>
             <p class="text-sm font-rajdhani flex-1" style="color: var(--text-primary);">{toast.message}</p>
             <button
-                class="flex-shrink-0 ml-2 transition-colors"
-                style="color: var(--text-muted);"
-                onmouseenter={(e) => e.currentTarget.style.color = 'white'}
-                onmouseleave={(e) => e.currentTarget.style.color = 'var(--text-muted)'}
+                class="flex-shrink-0 ml-2 cyber-hover-white"
                 onclick={() => removeToast(toast.id)}
             >
                 ×

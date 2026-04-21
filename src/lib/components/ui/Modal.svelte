@@ -78,10 +78,8 @@
                  style="border-bottom: 1px solid rgba(252,238,10,0.1); background: rgba(252,238,10,0.02);">
                 <h2 class="font-rajdhani font-bold text-white uppercase tracking-[0.12em] text-sm">// {title}</h2>
                 <button
-                    class="text-xl leading-none transition-colors"
-                    style="color: var(--text-muted);"
-                    onmouseenter={(e) => e.currentTarget.style.color = 'var(--cyber-yellow)'}
-                    onmouseleave={(e) => e.currentTarget.style.color = 'var(--text-muted)'}
+                    class="text-xl leading-none cyber-hover-muted"
+                    aria-label="Close dialog"
                     onclick={close}
                 >
                     ×
@@ -89,10 +87,8 @@
             </div>
         {:else}
             <button
-                class="absolute top-4 right-4 text-xl leading-none z-10 transition-colors"
-                style="color: var(--text-muted);"
-                onmouseenter={(e) => e.currentTarget.style.color = 'var(--cyber-yellow)'}
-                onmouseleave={(e) => e.currentTarget.style.color = 'var(--text-muted)'}
+                class="absolute top-4 right-4 text-xl leading-none z-10 cyber-hover-muted"
+                aria-label="Close dialog"
                 onclick={close}
             >
                 ×

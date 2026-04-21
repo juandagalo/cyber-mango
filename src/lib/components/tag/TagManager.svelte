@@ -164,27 +164,18 @@
                                 onclick={() => saveEdit(tag.id)}
                             >Save</button>
                             <button
-                                class="text-xs flex-shrink-0 transition-colors"
-                                style="color: var(--text-muted);"
-                                onmouseenter={(e) => e.currentTarget.style.color = 'var(--cyber-yellow)'}
-                                onmouseleave={(e) => e.currentTarget.style.color = 'var(--text-muted)'}
+                                class="text-xs flex-shrink-0 cyber-hover-muted"
                                 onclick={cancelEdit}
                             >x</button>
                         {:else}
                             <span class="w-3 h-3 flex-shrink-0" style="background: {tag.color}; box-shadow: 0 0 4px {tag.color};"></span>
                             <span class="flex-1 text-xs font-rajdhani font-semibold truncate" style="color: var(--text-primary);">{tag.name}</span>
                             <button
-                                class="text-[10px] font-rajdhani font-bold uppercase flex-shrink-0 px-1 transition-colors"
-                                style="color: var(--text-muted);"
-                                onmouseenter={(e) => e.currentTarget.style.color = 'var(--cyber-yellow)'}
-                                onmouseleave={(e) => e.currentTarget.style.color = 'var(--text-muted)'}
+                                class="text-[10px] font-rajdhani font-bold uppercase flex-shrink-0 px-1 cyber-hover-muted"
                                 onclick={() => startEdit(tag)}
                             >Edit</button>
                             <button
-                                class="text-[10px] flex-shrink-0 px-1 transition-colors"
-                                style="color: var(--text-muted);"
-                                onmouseenter={(e) => e.currentTarget.style.color = 'var(--cyber-red-bright)'}
-                                onmouseleave={(e) => e.currentTarget.style.color = 'var(--text-muted)'}
+                                class="text-[10px] flex-shrink-0 px-1 cyber-hover-muted-red"
                                 onclick={() => (tagToDelete = tag)}
                             >x</button>
                         {/if}
@@ -212,20 +203,16 @@
                     </div>
                     <div class="flex gap-2">
                         <button
-                            class="flex-1 py-1.5 text-xs font-rajdhani font-bold uppercase tracking-wider transition-all clip-cyber-sm disabled:opacity-50"
-                            style="border: 1px solid var(--cyber-yellow); color: var(--cyber-yellow);"
-                            onmouseenter={(e) => { e.currentTarget.style.background = 'var(--cyber-yellow)'; e.currentTarget.style.color = '#0D0D12'; }}
-                            onmouseleave={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'var(--cyber-yellow)'; }}
+                            class="flex-1 py-1.5 text-xs font-rajdhani font-bold uppercase tracking-wider clip-cyber-sm disabled:opacity-50 cyber-hover-fill-yellow"
+                            style="border: 1px solid;"
                             onclick={createTag}
                             disabled={savingNew}
                         >
                             {savingNew ? 'Creating...' : 'Create Tag'}
                         </button>
                         <button
-                            class="px-3 py-1.5 text-xs font-rajdhani font-semibold uppercase transition-all"
-                            style="color: var(--text-muted); border: 1px solid rgba(252,238,10,0.1);"
-                            onmouseenter={(e) => { e.currentTarget.style.color = 'var(--cyber-yellow)'; e.currentTarget.style.borderColor = 'var(--cyber-yellow)'; }}
-                            onmouseleave={(e) => { e.currentTarget.style.color = 'var(--text-muted)'; e.currentTarget.style.borderColor = 'rgba(252,238,10,0.1)'; }}
+                            class="px-3 py-1.5 text-xs font-rajdhani font-semibold uppercase cyber-hover-yellow"
+                            style="border: 1px solid;"
                             onclick={() => (creatingNew = false)}
                         >
                             Cancel
@@ -234,10 +221,8 @@
                 </div>
             {:else}
                 <button
-                    class="w-full py-2 text-xs font-rajdhani font-semibold uppercase tracking-wider transition-all flex items-center justify-center gap-2"
-                    style="color: var(--text-muted); border: 1px dashed rgba(252,238,10,0.12);"
-                    onmouseenter={(e) => { e.currentTarget.style.color = 'var(--cyber-yellow)'; e.currentTarget.style.borderColor = 'rgba(252,238,10,0.3)'; }}
-                    onmouseleave={(e) => { e.currentTarget.style.color = 'var(--text-muted)'; e.currentTarget.style.borderColor = 'rgba(252,238,10,0.12)'; }}
+                    class="w-full py-2 text-xs font-rajdhani font-semibold uppercase tracking-wider flex items-center justify-center gap-2 cyber-hover-add"
+                    style="border: 1px dashed;"
                     onclick={() => (creatingNew = true)}
                 >
                     <span>+</span> Add New Tag

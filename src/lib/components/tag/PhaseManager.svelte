@@ -194,10 +194,7 @@
                                 onclick={() => saveEdit(phase.id)}
                             >Save</button>
                             <button
-                                class="text-xs flex-shrink-0 transition-colors"
-                                style="color: var(--text-muted);"
-                                onmouseenter={(e) => e.currentTarget.style.color = 'var(--cyber-yellow)'}
-                                onmouseleave={(e) => e.currentTarget.style.color = 'var(--text-muted)'}
+                                class="text-xs flex-shrink-0 cyber-hover-muted"
                                 onclick={cancelEdit}
                             >x</button>
                         {:else}
@@ -207,37 +204,25 @@
                             <!-- Reorder buttons -->
                             {#if i > 0}
                                 <button
-                                    class="text-[10px] flex-shrink-0 px-0.5 transition-colors"
-                                    style="color: var(--text-muted);"
+                                    class="text-[10px] flex-shrink-0 px-0.5 cyber-hover-muted-cyan"
                                     title="Move up"
-                                    onmouseenter={(e) => e.currentTarget.style.color = 'var(--cyber-cyan)'}
-                                    onmouseleave={(e) => e.currentTarget.style.color = 'var(--text-muted)'}
                                     onclick={() => movePhase(i, -1)}
                                 >&#9650;</button>
                             {/if}
                             {#if i < phases.length - 1}
                                 <button
-                                    class="text-[10px] flex-shrink-0 px-0.5 transition-colors"
-                                    style="color: var(--text-muted);"
+                                    class="text-[10px] flex-shrink-0 px-0.5 cyber-hover-muted-cyan"
                                     title="Move down"
-                                    onmouseenter={(e) => e.currentTarget.style.color = 'var(--cyber-cyan)'}
-                                    onmouseleave={(e) => e.currentTarget.style.color = 'var(--text-muted)'}
                                     onclick={() => movePhase(i, 1)}
                                 >&#9660;</button>
                             {/if}
 
                             <button
-                                class="text-[10px] font-rajdhani font-bold uppercase flex-shrink-0 px-1 transition-colors"
-                                style="color: var(--text-muted);"
-                                onmouseenter={(e) => e.currentTarget.style.color = 'var(--cyber-yellow)'}
-                                onmouseleave={(e) => e.currentTarget.style.color = 'var(--text-muted)'}
+                                class="text-[10px] font-rajdhani font-bold uppercase flex-shrink-0 px-1 cyber-hover-muted"
                                 onclick={() => startEdit(phase)}
                             >Edit</button>
                             <button
-                                class="text-[10px] flex-shrink-0 px-1 transition-colors"
-                                style="color: var(--text-muted);"
-                                onmouseenter={(e) => e.currentTarget.style.color = 'var(--cyber-red-bright)'}
-                                onmouseleave={(e) => e.currentTarget.style.color = 'var(--text-muted)'}
+                                class="text-[10px] flex-shrink-0 px-1 cyber-hover-muted-red"
                                 onclick={() => (phaseToDelete = phase)}
                             >x</button>
                         {/if}
@@ -265,20 +250,16 @@
                     </div>
                     <div class="flex gap-2">
                         <button
-                            class="flex-1 py-1.5 text-xs font-rajdhani font-bold uppercase tracking-wider transition-all clip-cyber-sm disabled:opacity-50"
-                            style="border: 1px solid var(--cyber-yellow); color: var(--cyber-yellow);"
-                            onmouseenter={(e) => { e.currentTarget.style.background = 'var(--cyber-yellow)'; e.currentTarget.style.color = '#0D0D12'; }}
-                            onmouseleave={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'var(--cyber-yellow)'; }}
+                            class="flex-1 py-1.5 text-xs font-rajdhani font-bold uppercase tracking-wider clip-cyber-sm disabled:opacity-50 cyber-hover-fill-yellow"
+                            style="border: 1px solid;"
                             onclick={createPhase}
                             disabled={savingNew}
                         >
                             {savingNew ? 'Creating...' : 'Create Phase'}
                         </button>
                         <button
-                            class="px-3 py-1.5 text-xs font-rajdhani font-semibold uppercase transition-all"
-                            style="color: var(--text-muted); border: 1px solid rgba(252,238,10,0.1);"
-                            onmouseenter={(e) => { e.currentTarget.style.color = 'var(--cyber-yellow)'; e.currentTarget.style.borderColor = 'var(--cyber-yellow)'; }}
-                            onmouseleave={(e) => { e.currentTarget.style.color = 'var(--text-muted)'; e.currentTarget.style.borderColor = 'rgba(252,238,10,0.1)'; }}
+                            class="px-3 py-1.5 text-xs font-rajdhani font-semibold uppercase cyber-hover-yellow"
+                            style="border: 1px solid;"
                             onclick={() => (creatingNew = false)}
                         >
                             Cancel
@@ -287,10 +268,8 @@
                 </div>
             {:else}
                 <button
-                    class="w-full py-2 text-xs font-rajdhani font-semibold uppercase tracking-wider transition-all flex items-center justify-center gap-2"
-                    style="color: var(--text-muted); border: 1px dashed rgba(252,238,10,0.12);"
-                    onmouseenter={(e) => { e.currentTarget.style.color = 'var(--cyber-yellow)'; e.currentTarget.style.borderColor = 'rgba(252,238,10,0.3)'; }}
-                    onmouseleave={(e) => { e.currentTarget.style.color = 'var(--text-muted)'; e.currentTarget.style.borderColor = 'rgba(252,238,10,0.12)'; }}
+                    class="w-full py-2 text-xs font-rajdhani font-semibold uppercase tracking-wider flex items-center justify-center gap-2 cyber-hover-add"
+                    style="border: 1px dashed;"
                     onclick={() => (creatingNew = true)}
                 >
                     <span>+</span> Add New Phase

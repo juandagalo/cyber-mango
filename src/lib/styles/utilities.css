@@ -1,6 +1,182 @@
 /* ═══════════════════════════════════════════
-   UTILITIES — clip-path, corner brackets, scan lines
+   UTILITIES — clip-path, corner brackets, scan lines, hover utilities
    ═══════════════════════════════════════════ */
+
+/* ─── Hover utility classes ─────────────────────────────────────────────────
+   Each class manages BOTH the base state and the :hover state.
+   transition: all 150ms is included in every class.
+   ─────────────────────────────────────────────────────────────────────── */
+
+/* Yellow border/bg hover — used on action buttons (Manage Tags, Cancel, etc.) */
+.cyber-hover-yellow {
+  color: var(--text-muted);
+  border-color: rgba(252, 238, 10, 0.2);
+  background: transparent;
+  transition: all 150ms;
+}
+.cyber-hover-yellow:hover {
+  color: var(--cyber-yellow);
+  border-color: var(--cyber-yellow);
+  background: rgba(252, 238, 10, 0.05);
+}
+
+/* Cyan border/bg hover — used on Manage Phases button */
+.cyber-hover-cyan {
+  color: var(--text-muted);
+  border-color: rgba(252, 238, 10, 0.2);
+  background: transparent;
+  transition: all 150ms;
+}
+.cyber-hover-cyan:hover {
+  color: var(--cyber-cyan);
+  border-color: var(--cyber-cyan);
+  background: rgba(0, 255, 255, 0.05);
+}
+
+/* Red bg hover — used on delete buttons */
+.cyber-hover-red {
+  transition: all 150ms;
+}
+.cyber-hover-red:hover {
+  background: rgba(197, 0, 60, 0.08);
+}
+
+/* Muted-to-yellow text hover — used on icon/small buttons with no border change */
+.cyber-hover-muted {
+  color: var(--text-muted);
+  transition: color 150ms;
+}
+.cyber-hover-muted:hover {
+  color: var(--cyber-yellow);
+}
+
+/* Muted-to-red text hover — used on delete x buttons */
+.cyber-hover-muted-red {
+  color: var(--text-muted);
+  transition: color 150ms;
+}
+.cyber-hover-muted-red:hover {
+  color: var(--cyber-red-bright);
+}
+
+/* Muted-to-cyan text hover — used on up/down arrows in PhaseManager */
+.cyber-hover-muted-cyan {
+  color: var(--text-muted);
+  transition: color 150ms;
+}
+.cyber-hover-muted-cyan:hover {
+  color: var(--cyber-cyan);
+}
+
+/* Cyan-text-only hover — used on CardSearch clear button (×) */
+.cyber-hover-text-cyan {
+  color: rgba(0, 255, 255, 0.5);
+  transition: color 150ms;
+}
+.cyber-hover-text-cyan:hover {
+  color: var(--cyber-cyan);
+}
+
+/* Dashed yellow border hover — used on "Add Column", "Add New Tag/Phase" buttons */
+.cyber-hover-add {
+  color: var(--text-muted);
+  background: rgba(252, 238, 10, 0.02);
+  border-color: rgba(252, 238, 10, 0.12);
+  transition: all 150ms;
+}
+.cyber-hover-add:hover {
+  color: var(--cyber-yellow);
+  border-color: rgba(252, 238, 10, 0.3);
+  background: rgba(252, 238, 10, 0.04);
+}
+
+/* Yellow fill hover — used on "Add", "Create Tag/Phase" primary action buttons */
+.cyber-hover-fill-yellow {
+  color: var(--cyber-yellow);
+  border-color: var(--cyber-yellow);
+  background: transparent;
+  transition: all 150ms;
+}
+.cyber-hover-fill-yellow:hover {
+  background: var(--cyber-yellow);
+  color: #0d0d12;
+}
+
+/* Red fill hover — used on "Delete Card" and ConfirmDialog confirm button */
+.cyber-hover-fill-red {
+  color: var(--cyber-red-bright);
+  border-color: var(--cyber-red-bright);
+  background: transparent;
+  transition: all 150ms;
+}
+.cyber-hover-fill-red:hover {
+  background: var(--cyber-red-bright);
+  color: #0d0d12;
+}
+
+/* Menu item hover — used on dropdown menu items */
+.cyber-hover-menu-item {
+  color: #d4d4d4;
+  transition: all 150ms;
+}
+.cyber-hover-menu-item:hover {
+  background: rgba(252, 238, 10, 0.06);
+  color: var(--cyber-yellow);
+}
+
+/* Card item hover — used on list items in pickers */
+.cyber-hover-card-item {
+  transition: background 150ms;
+}
+.cyber-hover-card-item:hover {
+  background: rgba(252, 238, 10, 0.04);
+}
+
+/* CardSearch trigger button hover — special: includes box-shadow */
+.cyber-hover-search-trigger {
+  color: var(--text-muted);
+  border-color: rgba(0, 255, 255, 0.15);
+  background: rgba(0, 255, 255, 0.03);
+  box-shadow: none;
+  transition: all 150ms;
+}
+.cyber-hover-search-trigger:hover {
+  color: var(--cyber-cyan);
+  border-color: rgba(0, 255, 255, 0.4);
+  background: rgba(0, 255, 255, 0.06);
+  box-shadow: 0 0 12px rgba(0, 255, 255, 0.1), inset 0 0 12px rgba(0, 255, 255, 0.03);
+}
+
+/* CardSearch ESC key button hover */
+.cyber-hover-esc {
+  color: rgba(0, 255, 255, 0.3);
+  border-color: rgba(0, 255, 255, 0.12);
+  transition: all 150ms;
+}
+.cyber-hover-esc:hover {
+  color: rgba(0, 255, 255, 0.5);
+  border-color: rgba(0, 255, 255, 0.25);
+}
+
+/* AddColumn cancel button — dashed border variant without dashed */
+.cyber-hover-cancel {
+  color: var(--text-muted);
+  border-color: rgba(252, 238, 10, 0.15);
+  transition: all 150ms;
+}
+.cyber-hover-cancel:hover {
+  color: var(--cyber-yellow);
+  border-color: var(--cyber-yellow);
+}
+
+/* Toast close button hover — muted to white */
+.cyber-hover-white {
+  color: var(--text-muted);
+  transition: color 150ms;
+}
+.cyber-hover-white:hover {
+  color: white;
+}
 
 /* Clip-path — angular CP2077 corners */
 .clip-cyber {
@@ -87,6 +263,13 @@
     6px 100%,
     0 calc(100% - 6px)
   );
+}
+
+/* DnD drag ghost styling */
+[data-is-dnd-shadow-item] .card-wrapper {
+  opacity: 0.4;
+  border: 1px dashed rgba(252, 238, 10, 0.4) !important;
+  box-shadow: 0 0 10px rgba(252, 238, 10, 0.15) !important;
 }
 
 .scan-lines::after {

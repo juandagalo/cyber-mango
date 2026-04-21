@@ -1,18 +1,12 @@
 <script lang="ts">
     import type { Phase } from '$lib/types/board.js';
+    import { hexToRgb } from '$lib/utils/color.js';
 
     let { phases, currentPhaseId, onchange }: {
         phases: Phase[];
         currentPhaseId: string | null;
         onchange?: (phaseId: string | null) => void;
     } = $props();
-
-    function hexToRgb(hex: string): string {
-        const r = parseInt(hex.slice(1, 3), 16);
-        const g = parseInt(hex.slice(3, 5), 16);
-        const b = parseInt(hex.slice(5, 7), 16);
-        return `${r},${g},${b}`;
-    }
 
     const currentIndex = $derived(
         currentPhaseId ? phases.findIndex(p => p.id === currentPhaseId) : -1
@@ -61,11 +55,8 @@
                     {currentPhase.name}
                 </span>
                 <button
-                    class="text-[10px] font-mono transition-colors px-1"
-                    style="color: var(--text-muted);"
+                    class="text-[10px] font-mono px-1 cyber-hover-muted-red"
                     title="Unassign phase"
-                    onmouseenter={(e) => e.currentTarget.style.color = 'var(--cyber-red-bright)'}
-                    onmouseleave={(e) => e.currentTarget.style.color = 'var(--text-muted)'}
                     onclick={() => onchange?.(null)}
                 >
                     x

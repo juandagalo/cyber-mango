@@ -27,20 +27,16 @@
 
         <div class="flex gap-3 justify-end">
             <button
-                class="px-4 py-2 text-xs font-rajdhani font-bold uppercase tracking-wider transition-all"
-                style="border: 1px solid rgba(252,238,10,0.2); color: var(--text-muted);"
-                onmouseenter={(e) => { e.currentTarget.style.color = 'var(--cyber-yellow)'; e.currentTarget.style.borderColor = 'var(--cyber-yellow)'; }}
-                onmouseleave={(e) => { e.currentTarget.style.color = 'var(--text-muted)'; e.currentTarget.style.borderColor = 'rgba(252,238,10,0.2)'; }}
+                class="px-4 py-2 text-xs font-rajdhani font-bold uppercase tracking-wider cyber-hover-yellow"
+                style="border: 1px solid;"
                 onclick={cancel}
                 disabled={loading}
             >
                 Cancel
             </button>
             <button
-                class="px-4 py-2 text-xs font-rajdhani font-bold uppercase tracking-wider transition-all clip-cyber-sm disabled:opacity-50"
-                style="border: 1px solid var(--cyber-red-bright); color: var(--cyber-red-bright);"
-                onmouseenter={(e) => { e.currentTarget.style.background = 'var(--cyber-red-bright)'; e.currentTarget.style.color = '#0D0D12'; }}
-                onmouseleave={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'var(--cyber-red-bright)'; }}
+                class="px-4 py-2 text-xs font-rajdhani font-bold uppercase tracking-wider clip-cyber-sm disabled:opacity-50 cyber-hover-fill-red"
+                style="border: 1px solid;"
                 onclick={confirm}
                 disabled={loading}
             >

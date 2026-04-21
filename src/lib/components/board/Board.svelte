@@ -174,19 +174,15 @@
     <!-- Right: action buttons -->
     <div class="flex items-center gap-2 justify-end">
         <button
-            class="text-xs font-rajdhani font-semibold uppercase tracking-[0.1em] px-4 py-1.5 transition-all clip-cyber-sm"
-            style="border: 1px solid rgba(252,238,10,0.2); color: var(--text-muted); background: transparent;"
-            onmouseenter={(e) => { e.currentTarget.style.color = 'var(--cyber-cyan)'; e.currentTarget.style.borderColor = 'var(--cyber-cyan)'; e.currentTarget.style.background = 'rgba(0,255,255,0.05)'; }}
-            onmouseleave={(e) => { e.currentTarget.style.color = 'var(--text-muted)'; e.currentTarget.style.borderColor = 'rgba(252,238,10,0.2)'; e.currentTarget.style.background = 'transparent'; }}
+            class="text-xs font-rajdhani font-semibold uppercase tracking-[0.1em] px-4 py-1.5 clip-cyber-sm cyber-hover-cyan"
+            style="border: 1px solid;"
             onclick={() => (showPhaseManager = true)}
         >
             Manage Phases
         </button>
         <button
-            class="text-xs font-rajdhani font-semibold uppercase tracking-[0.1em] px-4 py-1.5 transition-all clip-cyber-sm"
-            style="border: 1px solid rgba(252,238,10,0.2); color: var(--text-muted); background: transparent;"
-            onmouseenter={(e) => { e.currentTarget.style.color = 'var(--cyber-yellow)'; e.currentTarget.style.borderColor = 'var(--cyber-yellow)'; e.currentTarget.style.background = 'rgba(252,238,10,0.05)'; }}
-            onmouseleave={(e) => { e.currentTarget.style.color = 'var(--text-muted)'; e.currentTarget.style.borderColor = 'rgba(252,238,10,0.2)'; e.currentTarget.style.background = 'transparent'; }}
+            class="text-xs font-rajdhani font-semibold uppercase tracking-[0.1em] px-4 py-1.5 clip-cyber-sm cyber-hover-yellow"
+            style="border: 1px solid;"
             onclick={() => (showTagManager = true)}
         >
             Manage Tags

@@ -121,9 +121,8 @@
                 <!-- svelte-ignore a11y_click_events_have_key_events -->
                 <div
                     class="px-3 py-2 flex items-center gap-2 cursor-pointer transition-colors"
-                    style="background: {assigned ? 'rgba(252,238,10,0.04)' : 'transparent'};"
-                    onmouseenter={(e) => { if (!assigned) e.currentTarget.style.background = 'rgba(252,238,10,0.03)'; }}
-                    onmouseleave={(e) => { if (!assigned) e.currentTarget.style.background = 'transparent'; }}
+                    class:cyber-hover-card-item={!assigned}
+                    style="background: {assigned ? 'rgba(252,238,10,0.04)' : ''};"
                     onclick={() => assignTag(tag.id)}
                     role="button"
                     tabindex="0"
@@ -158,20 +157,15 @@
                 <div class="flex items-center gap-2">
                     <input type="color" bind:value={newTagColor} class="w-8 h-6 cursor-pointer" />
                     <button
-                        class="flex-1 py-1 text-xs font-rajdhani font-bold uppercase transition-all disabled:opacity-50"
-                        style="color: var(--cyber-yellow); border: 1px solid var(--cyber-yellow);"
-                        onmouseenter={(e) => { e.currentTarget.style.background = 'var(--cyber-yellow)'; e.currentTarget.style.color = '#0D0D12'; }}
-                        onmouseleave={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'var(--cyber-yellow)'; }}
+                        class="flex-1 py-1 text-xs font-rajdhani font-bold uppercase disabled:opacity-50 cyber-hover-fill-yellow"
+                        style="border: 1px solid;"
                         onclick={createTag}
                         disabled={savingNew}
                     >
                         {savingNew ? '...' : 'Create'}
                     </button>
                     <button
-                        class="py-1 px-2 text-xs transition-colors"
-                        style="color: var(--text-muted);"
-                        onmouseenter={(e) => e.currentTarget.style.color = 'var(--cyber-yellow)'}
-                        onmouseleave={(e) => e.currentTarget.style.color = 'var(--text-muted)'}
+                        class="py-1 px-2 text-xs cyber-hover-muted"
                         onclick={() => (creatingNew = false)}
                     >
                         x
@@ -180,10 +174,7 @@
             </div>
         {:else}
             <button
-                class="w-full px-3 py-2 text-xs font-rajdhani font-semibold transition-colors text-left flex items-center gap-2"
-                style="color: var(--text-muted);"
-                onmouseenter={(e) => e.currentTarget.style.color = 'var(--cyber-yellow)'}
-                onmouseleave={(e) => e.currentTarget.style.color = 'var(--text-muted)'}
+                class="w-full px-3 py-2 text-xs font-rajdhani font-semibold text-left flex items-center gap-2 cyber-hover-muted"
                 onclick={() => (creatingNew = true)}
             >
                 <span class="text-base leading-none">+</span>

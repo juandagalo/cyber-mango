@@ -67,27 +67,23 @@
                 placeholder="Column name..."
                 disabled={loading}
                 class="w-full bg-transparent px-3 py-1.5 text-xs font-rajdhani font-semibold text-white uppercase tracking-wider focus:outline-none transition-colors"
-                style="border: 1px solid rgba(252,238,10,0.15); placeholder-color: var(--text-muted);"
+                style="border: 1px solid rgba(252,238,10,0.15);"
                 onfocus={(e) => e.currentTarget.style.borderColor = 'var(--cyber-yellow)'}
                 onblur={(e) => e.currentTarget.style.borderColor = 'rgba(252,238,10,0.15)'}
                 onkeydown={handleKeydown}
             />
             <div class="flex gap-2">
                 <button
-                    class="flex-1 py-1.5 text-xs font-rajdhani font-bold uppercase tracking-wider transition-all clip-cyber-sm"
-                    style="border: 1px solid var(--cyber-yellow); color: var(--cyber-yellow);"
-                    onmouseenter={(e) => { e.currentTarget.style.background = 'var(--cyber-yellow)'; e.currentTarget.style.color = '#0D0D12'; }}
-                    onmouseleave={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'var(--cyber-yellow)'; }}
+                    class="flex-1 py-1.5 text-xs font-rajdhani font-bold uppercase tracking-wider clip-cyber-sm cyber-hover-fill-yellow"
+                    style="border: 1px solid;"
                     onclick={createColumn}
                     disabled={loading}
                 >
                     {loading ? 'Creating...' : 'Add'}
                 </button>
                 <button
-                    class="flex-1 py-1.5 text-xs font-rajdhani font-semibold uppercase tracking-wider transition-all"
-                    style="border: 1px solid rgba(252,238,10,0.15); color: var(--text-muted);"
-                    onmouseenter={(e) => { e.currentTarget.style.color = 'var(--cyber-yellow)'; e.currentTarget.style.borderColor = 'var(--cyber-yellow)'; }}
-                    onmouseleave={(e) => { e.currentTarget.style.color = 'var(--text-muted)'; e.currentTarget.style.borderColor = 'rgba(252,238,10,0.15)'; }}
+                    class="flex-1 py-1.5 text-xs font-rajdhani font-semibold uppercase tracking-wider cyber-hover-cancel"
+                    style="border: 1px solid;"
                     onclick={cancel}
                     disabled={loading}
                 >
@@ -97,10 +93,8 @@
         </div>
     {:else}
         <button
-            class="w-full py-3 px-4 text-xs font-rajdhani font-semibold uppercase tracking-[0.1em] transition-all flex items-center gap-2 justify-center"
-            style="background: rgba(252,238,10,0.02); border: 1px dashed rgba(252,238,10,0.12); color: var(--text-muted);"
-            onmouseenter={(e) => { e.currentTarget.style.color = 'var(--cyber-yellow)'; e.currentTarget.style.borderColor = 'rgba(252,238,10,0.3)'; e.currentTarget.style.background = 'rgba(252,238,10,0.04)'; }}
-            onmouseleave={(e) => { e.currentTarget.style.color = 'var(--text-muted)'; e.currentTarget.style.borderColor = 'rgba(252,238,10,0.12)'; e.currentTarget.style.background = 'rgba(252,238,10,0.02)'; }}
+            class="w-full py-3 px-4 text-xs font-rajdhani font-semibold uppercase tracking-[0.1em] flex items-center gap-2 justify-center cyber-hover-add"
+            style="border: 1px dashed;"
             onclick={startAdding}
         >
             <span class="text-base leading-none">+</span>

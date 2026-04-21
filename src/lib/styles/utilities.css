@@ -265,6 +265,257 @@
   );
 }
 
+/* ─── Border utilities ───────────────────────────────────────────────────────
+   Replaces repeated rgba(252,238,10, X) border inline styles.
+   ─────────────────────────────────────────────────────────────────────── */
+
+/* 0.05 opacity — column card-area footer, column outer wrapper bottom, DnD outline */
+.cyber-border-faint {
+  border: 1px solid rgba(252, 238, 10, 0.05);
+}
+
+/* 0.06 opacity — column outer wrapper, detail right panel divider */
+.cyber-border-hairline {
+  border: 1px solid rgba(252, 238, 10, 0.06);
+}
+
+/* 0.08 opacity — subtle separators */
+.cyber-border-soft {
+  border: 1px solid var(--border-subtle);
+}
+
+/* 0.1 opacity — modal title separator */
+.cyber-border-dim {
+  border: 1px solid rgba(252, 238, 10, 0.1);
+}
+
+/* 0.12 opacity — form inputs default */
+.cyber-border-input {
+  border: 1px solid rgba(252, 238, 10, 0.12);
+}
+
+/* 0.15 opacity — wip input, add column form */
+.cyber-border-base {
+  border: 1px solid rgba(252, 238, 10, 0.15);
+}
+
+/* 0.2 opacity — dropdown menus, modal panel */
+.cyber-border-accent {
+  border: 1px solid rgba(252, 238, 10, 0.2);
+}
+
+/* App header bar — gradient background + yellow border-bottom */
+.app-header {
+  background: linear-gradient(90deg, rgba(197, 0, 60, 0.08) 0%, transparent 50%, rgba(252, 238, 10, 0.05) 100%);
+  border-bottom: 1px solid rgba(252, 238, 10, 0.15);
+}
+
+/* App logo heading — yellow text + glow */
+.app-logo-title {
+  color: var(--cyber-yellow);
+  text-shadow: 0 0 20px rgba(252, 238, 10, 0.4), 0 0 40px rgba(252, 238, 10, 0.1);
+}
+
+/* HUD status dot + text — neon green ONLINE indicator */
+.hud-status-dot {
+  background: var(--neon-green);
+  box-shadow: 0 0 4px var(--neon-green);
+}
+
+.hud-status-text {
+  color: var(--neon-green);
+}
+
+/* Board sub-header bar background + bottom border */
+.board-subheader {
+  background: rgba(252, 238, 10, 0.02);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+/* Border-top only variants for dividers */
+.cyber-divider-faint {
+  border-top: 1px solid rgba(252, 238, 10, 0.05);
+}
+
+.cyber-divider-soft {
+  border-top: 1px solid var(--border-subtle);
+}
+
+.cyber-divider-hairline {
+  border-top: 1px solid rgba(252, 238, 10, 0.06);
+}
+
+.cyber-divider-red {
+  border-top: 1px solid rgba(197, 0, 60, 0.15);
+}
+
+.cyber-divider-red-subtle {
+  border-top: 1px solid rgba(197, 0, 60, 0.25);
+}
+
+/* Border-left only for panel dividers */
+.cyber-panel-divider {
+  border-left: 1px solid rgba(252, 238, 10, 0.06);
+}
+
+/* Border-bottom only for section separators */
+.cyber-divider-bottom-soft {
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+/* ─── Background utilities ───────────────────────────────────────────────────
+   Replaces static inline background: var(--bg-*) values.
+   ─────────────────────────────────────────────────────────────────────── */
+
+.bg-cyber-surface-token { background: var(--bg-surface); }
+.bg-cyber-card-token    { background: var(--bg-card); }
+.bg-cyber-elevated-token { background: var(--bg-elevated); }
+
+/* CardSearch trigger button decorative corner cuts (opacity: 0.5 variants) */
+.search-corner-tl {
+  border-top: 1px solid var(--cyber-cyan);
+  border-left: 1px solid var(--cyber-cyan);
+  opacity: 0.5;
+}
+
+.search-corner-br {
+  border-bottom: 1px solid var(--cyber-cyan);
+  border-right: 1px solid var(--cyber-cyan);
+  opacity: 0.5;
+}
+
+/* CardSearch keyboard shortcut badge */
+.search-kbd {
+  color: rgba(0, 255, 255, 0.3);
+  border: 1px solid rgba(0, 255, 255, 0.12);
+}
+
+/* CardSearch expanded input wrapper */
+.search-input-wrapper {
+  border: 1px solid rgba(0, 255, 255, 0.35);
+  background: rgba(0, 0, 0, 0.5);
+}
+
+/* CardSearch expanded input — corner bracket decorations */
+.search-corner-tl-full {
+  border-top: 1px solid var(--cyber-cyan);
+  border-left: 1px solid var(--cyber-cyan);
+}
+
+.search-corner-tr-full {
+  border-top: 1px solid var(--cyber-cyan);
+  border-right: 1px solid var(--cyber-cyan);
+}
+
+.search-corner-bl-full {
+  border-bottom: 1px solid var(--cyber-cyan);
+  border-left: 1px solid var(--cyber-cyan);
+}
+
+.search-corner-br-full {
+  border-bottom: 1px solid var(--cyber-cyan);
+  border-right: 1px solid var(--cyber-cyan);
+}
+
+/* CardSearch no-match message */
+.search-no-match {
+  color: rgba(0, 255, 255, 0.35);
+}
+
+/* Search results panel — bg-card + cyan accent border */
+.cyber-search-results {
+  background: var(--bg-card);
+  border: 1px solid rgba(0, 255, 255, 0.2);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.8), 0 0 12px rgba(0, 255, 255, 0.06);
+}
+
+/* Dropdown panel — bg-card + yellow accent border + shadow */
+.cyber-dropdown-panel {
+  background: var(--bg-card);
+  border: 1px solid rgba(252, 238, 10, 0.2);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.7), 0 0 12px rgba(252, 238, 10, 0.05);
+}
+
+/* Surface panel — bg-surface + yellow accent border + shadow */
+.cyber-surface-panel {
+  background: var(--bg-surface);
+  border: 1px solid rgba(252, 238, 10, 0.2);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.7);
+}
+
+/* ─── Text color utilities ───────────────────────────────────────────────────
+   Replaces static inline color: var(--text-muted) / var(--text-primary).
+   ─────────────────────────────────────────────────────────────────────── */
+
+.text-cyber-muted   { color: var(--text-muted); }
+.text-cyber-primary { color: var(--text-primary); }
+
+/* ─── Description edit/preview toggle ───────────────────────────────────────
+   Active (edit) state: cyan color, cyan border, subtle cyan background.
+   Inactive (preview) state: handled by cyber-hover-muted.
+   ─────────────────────────────────────────────────────────────────────── */
+
+.desc-edit-active {
+  color: var(--cyber-cyan);
+  border-color: rgba(2, 215, 242, 0.3);
+  background: rgba(2, 215, 242, 0.05);
+}
+
+/* ─── WIP badge states ───────────────────────────────────────────────────────
+   Normal: muted yellow border + muted text. Exceeded: red border/bg/text.
+   ─────────────────────────────────────────────────────────────────────── */
+
+.wip-badge-normal {
+  border: 1px solid rgba(252, 238, 10, 0.12);
+  color: var(--text-muted);
+}
+
+.wip-badge-exceeded {
+  border: 1px solid var(--cyber-red-bright);
+  color: var(--cyber-red-bright);
+  background: rgba(255, 0, 60, 0.1);
+}
+
+/* ─── Input field utility ────────────────────────────────────────────────────
+   Standard cyber input: yellow-tinted border, focus turns full yellow.
+   ─────────────────────────────────────────────────────────────────────── */
+
+.cyber-input {
+  border-color: rgba(252, 238, 10, 0.12);
+  transition: border-color 150ms;
+}
+.cyber-input:focus {
+  border-color: var(--cyber-yellow);
+  outline: none;
+}
+
+/* Inline edit input underline — used in tag/phase edit row */
+.cyber-input-underline {
+  border-bottom: 1px solid var(--cyber-yellow);
+}
+
+/* Quick-add input — faint border + muted text, turns brighter on focus */
+.cyber-input-quickadd {
+  border-color: rgba(252, 238, 10, 0.06);
+  color: var(--text-muted);
+  transition: border-color 150ms, color 150ms;
+}
+.cyber-input-quickadd:focus {
+  border-color: rgba(252, 238, 10, 0.25);
+  color: var(--text-primary);
+  outline: none;
+}
+
+/* Card hover glow — background change in CSS, dynamic glow via --glow-color custom property */
+.card-hoverable {
+  background: var(--bg-card);
+  box-shadow: none;
+}
+.card-hoverable:hover {
+  background: var(--bg-elevated);
+  box-shadow: -2px 0 8px var(--glow-color), 0 0 15px var(--glow-color);
+}
+
 /* DnD drag ghost styling */
 [data-is-dnd-shadow-item] .card-wrapper {
   opacity: 0.4;
